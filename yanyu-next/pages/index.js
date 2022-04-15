@@ -25,7 +25,7 @@ export default function Home() {
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("userRole", userRole);
       if (accessToken && userRole) {
-        router.push("/successlogin");
+        router.push("/dashboard");
       }
     } catch (err) {
       if (!err?.response) {
