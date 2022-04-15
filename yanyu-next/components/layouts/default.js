@@ -1,3 +1,9 @@
-const DefaultLayout = ({ children }) => <div>{children}</div>;
+import Header from "../header";
+const DefaultLayout = ({ children }) => (
+  <div>
+    <Header />
+    {children}
+  </div>
+);
 
 export default DefaultLayout;
