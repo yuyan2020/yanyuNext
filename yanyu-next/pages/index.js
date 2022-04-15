@@ -11,29 +11,15 @@ import { useRouter } from "next/router";
 
 const { Title } = Typography;
 
-const baseURL = "http://cms.chtoma.com/api";
-const axiosInstance = axios.create({
-  baseURL,
-  withCredentials: true,
-  responseType: "json",
-});
-
 export default function Home() {
   const router = useRouter();
   const onFinish = async (values) => {
     try {
-      const response = await axiosInstance.post(
-        "/login",
-        {
-          email: values.email,
-          password: AES.encrypt(values.password, "cms").toString(),
-          role: values.roll,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.post("http://cms.chtoma.com/api/login", {
+        email: values.email,
+        password: AES.encrypt(values.password, "cms").toString(),
+        role: values.roll,
+      });
       const accessToken = response.data.data.token;
       const userRole = response.data.data.role;
       localStorage.setItem("accessToken", accessToken);
