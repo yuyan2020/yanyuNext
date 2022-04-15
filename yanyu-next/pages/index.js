@@ -34,7 +34,6 @@ export default function Home() {
           withCredentials: true,
         }
       );
-      console.log(JSON.stringify(response.data.data));
       const accessToken = response.data.data.token;
       const userRole = response.data.data.role;
       localStorage.setItem("accessToken", JSON.stringify(accessToken));
