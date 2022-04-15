@@ -1,61 +1,50 @@
-import { Layout, Menu, Breadcrumb } from "antd";
-import {
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
-import "antd/dist/antd.css";
-import { useState, createElement } from "react";
-import "./dashboard.module.css";
+import DashboardLayout from "../../components/layouts/dashboard";
 
-const { Header, Sider, Content, Footer } = Layout;
+const DocsPage = () => (
+  <div>
+    <h1>Page 1</h1>
 
-export default function Dashboard() {
-  const [collapsed, setCollapsed] = useState(false);
+    <p>
+      Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur purus
+      ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque ornare
+      aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit dignissim
+      sodales ut eu. Vel quam elementum pulvinar etiam non quam lacus
+      suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae purus
+      faucibus ornare suspendisse. Erat imperdiet sed euismod nisi. Tellus orci
+      ac auctor augue mauris augue. Malesuada bibendum arcu vitae elementum
+      curabitur vitae nunc sed velit. Diam vulputate ut pharetra sit. Quam id
+      leo in vitae turpis massa sed elementum tempus. Vulputate sapien nec
+      sagittis aliquam malesuada.
+    </p>
 
-  const toggle = () => {
-    setCollapsed(!collapsed);
-  };
+    <p>
+      Massa tincidunt dui ut ornare lectus sit amet. Vivamus arcu felis bibendum
+      ut tristique. Vestibulum lectus mauris ultrices eros in cursus turpis. In
+      massa tempor nec feugiat nisl pretium fusce. In fermentum posuere urna nec
+      tincidunt praesent semper. Lacus suspendisse faucibus interdum posuere
+      lorem ipsum dolor sit. Aenean sed adipiscing diam donec adipiscing
+      tristique risus nec feugiat. Hac habitasse platea dictumst quisque
+      sagittis purus sit amet volutpat. Adipiscing at in tellus integer feugiat.
+      Lacus viverra vitae congue eu. Eget dolor morbi non arcu risus. Tortor
+      pretium viverra suspendisse potenti nullam ac tortor vitae. Mus mauris
+      vitae ultricies leo integer malesuada nunc vel risus.
+    </p>
 
-  return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="logo" />
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
-          <Menu.Item key="1" icon={<UserOutlined />}>
-            nav 1
-          </Menu.Item>
-          <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-            nav 2
-          </Menu.Item>
-          <Menu.Item key="3" icon={<UploadOutlined />}>
-            nav 3
-          </Menu.Item>
-        </Menu>
-      </Sider>
-      <Layout className="site-layout">
-        <Header className="site-layout-background" style={{ padding: 0 }}>
-          {createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-            className: "trigger",
-            onClick: toggle,
-          })}
-        </Header>
-        <Content style={{ margin: "0 16px" }}>
-          <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb>
-          <div
-            className="site-layout-background"
-            style={{ padding: 24, minHeight: 360 }}
-          >
-            Bill is a cat.
-          </div>
-        </Content>
-        <Footer style={{ textAlign: "center" }}>CMS ©2022 Created by yy</Footer>
-      </Layout>
-    </Layout>
-  );
-}
+    <p>
+      Porttitor eget dolor morbi non arcu. Dignissim diam quis enim lobortis
+      scelerisque fermentum dui faucibus in. Tristique senectus et netus et
+      malesuada fames. Sed blandit libero volutpat sed cras ornare arcu dui
+      vivamus. Non odio euismod lacinia at quis risus sed vulputate odio.
+      Laoreet suspendisse interdum consectetur libero. Eget mauris pharetra et
+      ultrices neque. Adipiscing commodo elit at imperdiet dui accumsan sit amet
+      nulla. Hendrerit gravida rutrum quisque non tellus orci ac auctor. Ut
+      consequat semper viverra nam libero justo laoreet sit. Mauris pellentesque
+      pulvinar pellentesque habitant morbi tristique senectus et netus. Lectus
+      nulla at volutpat diam. Ornare arcu odio ut sem.
+    </p>
+  </div>
+);
+
+DocsPage.Layout = DashboardLayout;
+
+export default DocsPage;
