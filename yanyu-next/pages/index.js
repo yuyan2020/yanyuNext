@@ -24,11 +24,11 @@ export default function Home() {
     try {
       const response = await axiosInstance.post(
         "/login",
-        JSON.stringify({
+        {
           email: values.email,
           password: AES.encrypt(values.password, "cms").toString(),
           role: values.roll,
-        }),
+        },
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
@@ -36,8 +36,8 @@ export default function Home() {
       );
       const accessToken = response.data.data.token;
       const userRole = response.data.data.role;
-      localStorage.setItem("accessToken", JSON.stringify(accessToken));
-      localStorage.setItem("userRole", JSON.stringify(userRole));
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("userRole", userRole);
       if (accessToken && userRole) {
         router.push("/successlogin");
       }
