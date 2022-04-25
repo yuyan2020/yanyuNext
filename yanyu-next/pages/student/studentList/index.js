@@ -8,49 +8,6 @@ import { AudioOutlined } from "@ant-design/icons";
 import { debounce } from "lodash";
 
 const { Search } = Input;
-const columns = [
-  {
-    title: "No.",
-    dataIndex: "number",
-  },
-  {
-    title: "Name",
-    dataIndex: "name",
-    sorter: true,
-  },
-  {
-    title: "Area",
-    dataIndex: "area",
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-  },
-  {
-    title: "Selected Curriculum",
-    dataIndex: "sc",
-  },
-  {
-    title: "Student Type",
-    dataIndex: "type",
-  },
-  {
-    title: "Join Time",
-    dataIndex: "time",
-  },
-  {
-    title: "Action",
-    dataIndex: "",
-    key: "x",
-    width: "8%",
-    render: (record) => (
-      <div style={{ display: "flex", justifyContent: "space-around" }}>
-        <a onClick={() => console.log(record.id)}>Edit</a>
-        <a onClick={() => console.log(record.id)}>Delete</a>
-      </div>
-    ),
-  },
-];
 
 const token = localStorage.accessToken;
 
@@ -139,6 +96,111 @@ const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
   );
 };
 
+const EditForm = ({ visible, onEdit, onCancel, rowRecord }) => {
+  const [form] = Form.useForm();
+  console.log(rowRecord + "ksksks");
+  form.setFieldsValue({
+    id: rowRecord.id,
+    email: rowRecord.email,
+    type: rowRecord.type,
+    country: rowRecord.area,
+    name: rowRecord.name,
+  });
+  return (
+    <Modal
+      visible={visible}
+      title="Edit Student"
+      okText="Edit"
+      cancelText="Cancel"
+      onCancel={onCancel}
+      onOk={() => {
+        form
+          .validateFields()
+          .then((values) => {
+            form.resetFields();
+            onEdit(values);
+          })
+          .catch((info) => {
+            console.log("Validate Failed:", info);
+          });
+      }}
+    >
+      <Form
+        form={form}
+        layout="vertical"
+        name="form_in_modal"
+        initialValues={{
+          modifier: "public",
+        }}
+      >
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[
+            {
+              required: true,
+              type: "email",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Name"
+          name="name"
+          rules={[
+            {
+              required: true,
+              message: "Please input your name!",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Type"
+          name="type"
+          rules={[
+            {
+              required: true,
+              message: "Please select your student type!",
+            },
+          ]}
+        >
+          <Select>
+            <Select.Option value="1">1</Select.Option>
+            <Select.Option value="2">2</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item
+          label="Country"
+          name="country"
+          rules={[
+            {
+              required: true,
+              message: "Please input your country!",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Id"
+          name="id"
+          rules={[
+            {
+              required: true,
+              message: "Please input your country!",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+
 function StudentList() {
   const sumCourses = (courses) => {
     const sum = "";
@@ -157,13 +219,48 @@ function StudentList() {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [recordId, setRecordId] = useState({
+    id: 0,
+    email: "",
+    type: "",
+    country: "",
+  });
   const handlePageChange = (pageNumber) => {
     setPage(pageNumber);
   };
   const [visible, setVisible] = useState(false);
+  const [visibleEdit, setVisibleEdit] = useState(false);
 
   const addModal = () => {
     setVisible(true);
+  };
+
+  const addEditModal = () => {
+    setVisibleEdit(true);
+  };
+
+  const handleEdit = (e) => {
+    axios
+      .put(
+        "http://cms.chtoma.com/api/students",
+        {
+          name: e.name,
+          country: e.country,
+          email: e.email,
+          type: e.type,
+          id: e.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res);
+        setIsUpdate(!isUpdate);
+      });
+    setVisible(false);
   };
 
   const handleAddStudent = (e) => {
@@ -190,6 +287,84 @@ function StudentList() {
     setVisible(false);
   };
 
+  const columns = [
+    {
+      title: "No.",
+      dataIndex: "number",
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      sorter: true,
+    },
+    {
+      title: "Area",
+      dataIndex: "area",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+    },
+    {
+      title: "Selected Curriculum",
+      dataIndex: "sc",
+    },
+    {
+      title: "Student Type",
+      dataIndex: "type",
+    },
+    {
+      title: "Join Time",
+      dataIndex: "time",
+    },
+    {
+      title: "Action",
+      dataIndex: "",
+      key: "x",
+      width: "8%",
+      render: (record) => (
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          <a
+            onClick={
+              () => {
+                setRecordId(record);
+                console.log(recordId);
+                addEditModal();
+              }
+              // axios
+              //   .put(`http://cms.chtoma.com/api/students/${record.id}`, {
+              //     headers: {
+              //       Authorization: `Bearer ${token}`,
+              //     },
+              //   })
+              //   .then((res) => {
+              //     console.log(res);
+              //     setIsUpdate(!isUpdate);
+            }
+          >
+            Edit
+          </a>
+
+          <a
+            onClick={() =>
+              axios
+                .delete(`http://cms.chtoma.com/api/students/${record.id}`, {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                })
+                .then((res) => {
+                  console.log(res);
+                  setIsUpdate(!isUpdate);
+                })
+            }
+          >
+            Delete
+          </a>
+        </div>
+      ),
+    },
+  ];
   useEffect(() => {
     setLoading(true);
     let url;
@@ -235,7 +410,7 @@ function StudentList() {
       });
 
     setLoading(false);
-  }, [search, page]);
+  }, [isUpdate, search, page]);
 
   return (
     <div>
@@ -256,99 +431,15 @@ function StudentList() {
             setVisible(false);
           }}
         />
-        {/* <Modal title="Basic Modal" visible={isModalVisible} footer={null}>
-          <Form
-            name="basic"
-            labelCol={{
-              span: 8,
-            }}
-            wrapperCol={{
-              span: 16,
-            }}
-            // onFinish={onFinish}
-            // onFinishFailed={onFinishFailed}
-            autoComplete="off"
-            id="addStudent"
-            style={{ marginRight: "60px" }}
-          >
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[
-                {
-                  required: true,
-                  type: "email",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your name!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Type"
-              name="type"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select your student type!",
-                },
-              ]}
-            >
-              <Select>
-                <Select.Option value="1">1</Select.Option>
-                <Select.Option value="2">2</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label="Country"
-              name="country"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your country!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <div style={{ display: "flex", justifyContent: "end" }}>
-              <Form.Item
-                wrapperCol={{
-                  offset: 16,
-                  span: 16,
-                }}
-              >
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{ marginRight: "15px" }}
-                  onSubmit={handleAddStudent}
-                >
-                  Submit
-                </Button>
-              </Form.Item>
-              <Form.Item
-                wrapperCol={{
-                  offset: 16,
-                  span: 16,
-                }}
-              >
-                <Button htmlType="submit">Cancel</Button>
-              </Form.Item>
-            </div>
-          </Form>
-        </Modal> */}
+        <EditForm
+          visible={visibleEdit}
+          onEdit={handleEdit}
+          onCancel={() => {
+            setVisibleEdit(false);
+          }}
+          rowRecord={recordId}
+        />
+
         <Search
           placeholder="input search text"
           onSearch={onSearch}
