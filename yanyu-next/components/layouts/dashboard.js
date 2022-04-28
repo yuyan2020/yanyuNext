@@ -15,6 +15,7 @@ import axios from "axios";
 import { router } from "next/router";
 import { TeamOutlined } from "@ant-design/icons";
 import Link from "next/link";
+import { logout } from "../../lib/api/apiService";
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -64,23 +65,13 @@ export default function DashboardLayout({ children }) {
     setCollapsed(!collapsed);
   };
 
-  const onCollapse = (collapsed) => {
-    console.log(collapsed);
-    setCollapsed(collapsed);
-  };
-
-  const logout = async () => {
-    axios.post(
-      "http://cms.chtoma.com/api/logout",
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.accessToken}`,
-        },
-      }
-    );
-    localStorage.clear();
-    router.push("/");
+  const handleLogout = () => {
+    logout()
+      .then((res) => {
+        localStorage.clear();
+        router.push("/");
+      })
+      .catch((err) => console.log(err));
   };
 
   const onClick = (e) => {
@@ -110,7 +101,7 @@ export default function DashboardLayout({ children }) {
           })}
           <LogoutOutlined
             style={{ fontSize: "20px", marginRight: "10px", cursor: "pointer" }}
-            onClick={logout}
+            onClick={handleLogout}
           />
         </Header>
 

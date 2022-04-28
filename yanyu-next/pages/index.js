@@ -8,36 +8,26 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { AES } from "crypto-js";
 import { useRouter } from "next/router";
+import { login } from "../lib/api/apiService";
 
 const { Title } = Typography;
 
 export default function Home() {
   const router = useRouter();
-  const onFinish = async (values) => {
-    try {
-      const response = await axios.post("http://cms.chtoma.com/api/login", {
-        email: values.email,
-        password: AES.encrypt(values.password, "cms").toString(),
-        role: values.roll,
-      });
-      const accessToken = response.data.data.token;
-      const userRole = response.data.data.role;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("userRole", userRole);
-      if (accessToken && userRole) {
+
+  const onFinish = (values) => {
+    login({
+      email: values.email,
+      password: AES.encrypt(values.password, "cms").toString(),
+      role: values.roll,
+    })
+      .then((res) => {
+        localStorage.setItem("accessToken", res.data.data.token);
+        localStorage.setItem("userRole", res.data.data.role);
+        localStorage.setItem("serId", res.data.data.userId);
         router.push("/dashboard");
-      }
-    } catch (err) {
-      if (!err?.response) {
-        console.log("No Server Response");
-      } else if (err.response?.status === 400) {
-        console.log("Missing Username or Password");
-      } else if (err.response?.status === 401) {
-        console.log("Unauthorized");
-      } else {
-        console.log("Login Failed");
-      }
-    }
+      })
+      .catch((err) => console.log(err));
   };
 
   return (

@@ -1,17 +1,22 @@
 import DashboardLayout from "../../../components/layouts/dashboard";
 import { useEffect } from "react";
-import axios from "axios";
 import { Table } from "antd";
 import { useState } from "react";
-import { Modal, Button, Input, Space, Form, Checkbox, Select } from "antd";
-import { AudioOutlined } from "@ant-design/icons";
+import { Modal, Button, Input, Form } from "antd";
 import { debounce } from "lodash";
+import {
+  addStudent,
+  deleteStudent,
+  editStudent,
+  getStudents,
+} from "../../../lib/api/apiService";
+import { formatDistance } from "date-fns";
+import AddStudentForm from "../../../components/modalForms/addStudentForm";
+import EditStudentForm from "../../../components/modalForms/editStudentForm";
 
 const { Search } = Input;
 
-const token = localStorage.accessToken;
-
-const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
+const AddForm = ({ visible, onCreate, onCancel }) => {
   const [form] = Form.useForm();
   return (
     <Modal
@@ -32,78 +37,18 @@ const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
           });
       }}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        name="form_in_modal"
-        initialValues={{
-          modifier: "public",
-        }}
-      >
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            {
-              required: true,
-              type: "email",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Name"
-          name="name"
-          rules={[
-            {
-              required: true,
-              message: "Please input your name!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Type"
-          name="type"
-          rules={[
-            {
-              required: true,
-              message: "Please select your student type!",
-            },
-          ]}
-        >
-          <Select>
-            <Select.Option value="1">1</Select.Option>
-            <Select.Option value="2">2</Select.Option>
-          </Select>
-        </Form.Item>
-        <Form.Item
-          label="Country"
-          name="country"
-          rules={[
-            {
-              required: true,
-              message: "Please input your country!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-      </Form>
+      <AddStudentForm form={form} />
     </Modal>
   );
 };
 
 const EditForm = ({ visible, onEdit, onCancel, rowRecord }) => {
   const [form] = Form.useForm();
-  console.log(rowRecord + "ksksks");
   form.setFieldsValue({
     id: rowRecord.id,
     email: rowRecord.email,
-    type: rowRecord.type,
-    country: rowRecord.area,
+    type: rowRecord.type.id,
+    country: rowRecord.country,
     name: rowRecord.name,
   });
   return (
@@ -125,91 +70,12 @@ const EditForm = ({ visible, onEdit, onCancel, rowRecord }) => {
           });
       }}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        name="form_in_modal"
-        initialValues={{
-          modifier: "public",
-        }}
-      >
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            {
-              required: true,
-              type: "email",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Name"
-          name="name"
-          rules={[
-            {
-              required: true,
-              message: "Please input your name!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Type"
-          name="type"
-          rules={[
-            {
-              required: true,
-              message: "Please select your student type!",
-            },
-          ]}
-        >
-          <Select>
-            <Select.Option value="1">1</Select.Option>
-            <Select.Option value="2">2</Select.Option>
-          </Select>
-        </Form.Item>
-        <Form.Item
-          label="Country"
-          name="country"
-          rules={[
-            {
-              required: true,
-              message: "Please input your country!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Id"
-          name="id"
-          rules={[
-            {
-              required: true,
-              message: "Please input your country!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-      </Form>
+      <EditStudentForm form={form} />
     </Modal>
   );
 };
 
 function StudentList() {
-  const sumCourses = (courses) => {
-    const sum = "";
-    courses.forEach((element) => {
-      sum += element.name + ", ";
-    });
-    return sum;
-  };
-
   const [isUpdate, setIsUpdate] = useState(false);
   const onSearch = (e) => setSearch(e.target.value);
   const handleSearchInput = (e) => setSearch(e.target.value);
@@ -240,50 +106,26 @@ function StudentList() {
   };
 
   const handleEdit = (e) => {
-    axios
-      .put(
-        "http://cms.chtoma.com/api/students",
-        {
-          name: e.name,
-          country: e.country,
-          email: e.email,
-          type: e.type,
-          id: e.id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res);
-        setIsUpdate(!isUpdate);
-      });
-    setVisible(false);
+    editStudent({
+      name: e.name,
+      country: e.country,
+      email: e.email,
+      type: e.type,
+      id: e.id,
+    }).then((res) => {
+      console.log(res);
+      setIsUpdate(!isUpdate);
+    });
+    setVisibleEdit(false);
   };
 
   const handleAddStudent = (e) => {
-    console.log(e);
-    axios
-      .post(
-        "http://cms.chtoma.com/api/students",
-        {
-          name: e.name,
-          country: e.country,
-          email: e.email,
-          type: e.type,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res);
-        setIsUpdate(!isUpdate);
-      });
+    addStudent({
+      name: e.name,
+      country: e.country,
+      email: e.email,
+      type: e.type,
+    }).then((res) => setIsUpdate(!isUpdate));
     setVisible(false);
   };
 
@@ -291,6 +133,7 @@ function StudentList() {
     {
       title: "No.",
       dataIndex: "number",
+      render: (text, record, index) => index + (page - 1) * 20,
     },
     {
       title: "Name",
@@ -299,23 +142,32 @@ function StudentList() {
     },
     {
       title: "Area",
-      dataIndex: "area",
+      dataIndex: "country",
     },
     {
       title: "Email",
       dataIndex: "email",
+      width: "10%",
     },
     {
       title: "Selected Curriculum",
-      dataIndex: "sc",
+      dataIndex: "",
+      width: "30%",
+      render: (record) =>
+        record.courses.map((course) => course.name).join(", "),
     },
     {
       title: "Student Type",
-      dataIndex: "type",
+      dataIndex: ["type", "name"],
     },
     {
       title: "Join Time",
-      dataIndex: "time",
+      dataIndex: "",
+      width: "18%",
+      render: (record) =>
+        formatDistance(new Date(record.createdAt), new Date(), {
+          addSuffix: true,
+        }),
     },
     {
       title: "Action",
@@ -325,38 +177,20 @@ function StudentList() {
       render: (record) => (
         <div style={{ display: "flex", justifyContent: "space-around" }}>
           <a
-            onClick={
-              () => {
-                setRecordId(record);
-                console.log(recordId);
-                addEditModal();
-              }
-              // axios
-              //   .put(`http://cms.chtoma.com/api/students/${record.id}`, {
-              //     headers: {
-              //       Authorization: `Bearer ${token}`,
-              //     },
-              //   })
-              //   .then((res) => {
-              //     console.log(res);
-              //     setIsUpdate(!isUpdate);
-            }
+            onClick={() => {
+              setRecordId(record);
+              addEditModal();
+            }}
           >
             Edit
           </a>
 
           <a
             onClick={() =>
-              axios
-                .delete(`http://cms.chtoma.com/api/students/${record.id}`, {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-                })
-                .then((res) => {
-                  console.log(res);
-                  setIsUpdate(!isUpdate);
-                })
+              deleteStudent(record.id).then((res) => {
+                console.log(res);
+                setIsUpdate(!isUpdate);
+              })
             }
           >
             Delete
@@ -365,40 +199,17 @@ function StudentList() {
       ),
     },
   ];
+
   useEffect(() => {
     setLoading(true);
-    let url;
-    if (!search) {
-      url = `http://cms.chtoma.com/api/students?page=${page}&limit=20`;
-    } else {
-      url = `http://cms.chtoma.com/api/students?page=${page}&limit=20&query=${search}`;
-    }
-    axios
-      .get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+
+    getStudents({ page: page, limit: 20, query: search })
       .then((res) => {
         const students = res.data.data.students;
         console.log(students);
         console.log(res.data.data);
-        const studentData = [];
 
-        for (let i = 0; i < students.length; i++) {
-          studentData.push({
-            number: i + 20 * (page - 1),
-            name: students[i].name,
-            area: students[i].country,
-            email: students[i].email,
-            sc: sumCourses(students[i].courses),
-            type: students[i].type.name,
-            time: students[i].createdAt,
-            id: students[i].id,
-          });
-        }
-
-        setStudent(studentData);
+        setStudent(students);
 
         setPagination({
           pageSize: res.data.data.paginator.limit,
@@ -407,13 +218,14 @@ function StudentList() {
           onChange: handlePageChange,
           total: res.data.data.total,
         });
-      });
+      })
+      .catch((err) => console.log(err));
 
     setLoading(false);
   }, [isUpdate, search, page]);
 
   return (
-    <div>
+    <div style={{ width: "100%" }}>
       <div
         style={{
           display: "flex",
@@ -424,7 +236,7 @@ function StudentList() {
         <Button type="primary" onClick={addModal}>
           Add
         </Button>
-        <CollectionCreateForm
+        <AddForm
           visible={visible}
           onCreate={handleAddStudent}
           onCancel={() => {
@@ -450,7 +262,7 @@ function StudentList() {
 
       <Table
         columns={columns}
-        // rowKey={(record) => record.login.uuid}
+        rowKey={(record) => record.id}
         dataSource={student}
         pagination={pagination}
         loading={loading}
