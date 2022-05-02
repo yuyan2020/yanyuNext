@@ -62,3 +62,11 @@ export function editStudent(params) {
 export function deleteStudent(id) {
   return axiosInstance.delete(`/students/${id}`);
 }
+
+export async function getStudentById(id) {
+  return axiosInstance.get(`/students/${id}`);
+}
+
+export async function getStudentProfileById(params) {
+  return axiosInstance.get("/profile", { params });
+}

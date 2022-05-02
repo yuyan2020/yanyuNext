@@ -144,9 +144,10 @@ function StudentList() {
       dataIndex: "name",
       sorter: true,
       render: (text, record) => (
-        <Link href={`/stundet/studentList/${record.id}`}>
-          <a>{text}</a>
-        </Link>
+        // <Link href={`/student/studentList/${record.id}`}>{text}</Link>
+        <a onClick={() => router.push("/student/studentList/" + record.id)}>
+          {text}
+        </a>
       ),
     },
     {

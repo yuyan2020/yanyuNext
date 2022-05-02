@@ -10,9 +10,9 @@ import {
   BarsOutlined,
 } from "@ant-design/icons";
 import "antd/dist/antd.css";
-import { useState, createElement } from "react";
-import axios from "axios";
-import { router } from "next/router";
+import { useState, createElement, useEffect } from "react";
+import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import { TeamOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { logout } from "../../lib/api/apiService";
@@ -27,10 +27,6 @@ function getItem(label, key, icon, children) {
     label,
   };
 }
-
-const push = () => {
-  router.push("/student/studentList");
-};
 
 const items = [
   getItem(
@@ -62,8 +58,20 @@ const items = [
 ];
 
 export default function DashboardLayout({ children }) {
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [breadcrumb, setBreadcrumb] = useState(["manager", "Dashboard"]);
+
+  useEffect(() => {
+    if (router) {
+      const linkPath = router.asPath.split("/");
+      linkPath.shift();
+      console.log(linkPath);
+      let crumb = ["manager", ...linkPath];
+      setBreadcrumb(crumb);
+      // setBreadcrumbs(linkPath);
+    }
+  }, [router]);
 
   const toggle = () => {
     setCollapsed(!collapsed);
@@ -79,9 +87,9 @@ export default function DashboardLayout({ children }) {
   };
 
   const onClick = (e) => {
-    console.log(e.keyPath);
+    // console.log(e.keyPath);
     let crumb = ["manager", ...e.keyPath.reverse()];
-    setBreadcrumb(crumb);
+    // setBreadcrumb(crumb);
   };
 
   return (
