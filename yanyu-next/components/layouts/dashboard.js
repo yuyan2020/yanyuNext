@@ -46,8 +46,12 @@ const items = [
       <ProfileOutlined />
     ),
   ]),
-  getItem("Teacher", "sub2", <TeamOutlined />, [
-    getItem("Team 1", "3"),
+  getItem("Teacher", "Teacher", <TeamOutlined />, [
+    getItem(
+      <Link href="/student/studentList/kaka">kakatest</Link>,
+      "kaka",
+      <ProfileOutlined />
+    ),
     getItem("Team 2", "4"),
   ]),
   getItem("Course", "sub3", <BarsOutlined />, [

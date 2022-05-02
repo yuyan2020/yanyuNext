@@ -1,13 +1,6 @@
 import { Input, Form, Select } from "antd";
 
 export default function editStudentForm(props) {
-  //   form.setFieldsValue({
-  //     id: props.record.id,
-  //     email: props.record.email,
-  //     type: props.record.type,
-  //     country: props.record.area,
-  //     name: props.record.name,
-  //   });
   return (
     <Form
       form={props.form}

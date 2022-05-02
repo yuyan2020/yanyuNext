@@ -31,12 +31,10 @@ axiosInstance.interceptors.response.use(
   },
   function (error) {
     let res = error.response;
-    if (res.status == 401 || 403) {
+    if (res.status === 403) {
       window.location.href = "http://localhost:3000";
     }
-    console.error(
-      "Looks like there was a problem. Status Code: “ + res.status"
-    );
+    console.error("Looks like there was a problem.");
     return Promise.reject(error);
   }
 );

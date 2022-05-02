@@ -4,6 +4,7 @@ import { Table } from "antd";
 import { useState } from "react";
 import { Modal, Button, Input, Form } from "antd";
 import { debounce } from "lodash";
+import { Link } from "next/link";
 import {
   addStudent,
   deleteStudent,
@@ -13,6 +14,7 @@ import {
 import { formatDistance } from "date-fns";
 import AddStudentForm from "../../../components/modalForms/addStudentForm";
 import EditStudentForm from "../../../components/modalForms/editStudentForm";
+import { useRouter } from "next/router";
 
 const { Search } = Input;
 
@@ -76,6 +78,7 @@ const EditForm = ({ visible, onEdit, onCancel, rowRecord }) => {
 };
 
 function StudentList() {
+  const router = useRouter();
   const [isUpdate, setIsUpdate] = useState(false);
   const onSearch = (e) => setSearch(e.target.value);
   const handleSearchInput = (e) => setSearch(e.target.value);
@@ -128,6 +131,7 @@ function StudentList() {
     }).then((res) => setIsUpdate(!isUpdate));
     setVisible(false);
   };
+  // onClick={() => router.push(`/stundet/studentList/${record.id}`)}
 
   const columns = [
     {
@@ -139,6 +143,11 @@ function StudentList() {
       title: "Name",
       dataIndex: "name",
       sorter: true,
+      render: (text, record) => (
+        <Link href={`/stundet/studentList/${record.id}`}>
+          <a>{text}</a>
+        </Link>
+      ),
     },
     {
       title: "Area",
