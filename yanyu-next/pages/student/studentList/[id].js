@@ -10,85 +10,9 @@ import { divide } from "lodash";
 import { Tabs } from "antd";
 const { TabPane } = Tabs;
 
-const StudnetDetail = () => {
+const StudentDetail = () => {
   const router = useRouter();
   const { id } = router.query;
-
-  // {
-  //   country:"",
-  //   courses:[],
-  //   createdAt:"",
-  //   email:"",
-  //   id:null,
-  //   name:"",
-  //   type:null,
-  //   updatedAt:""
-  // }
-
-  //   {
-  //   "data": {
-  //     "createdAt": "1981-10-26 12:00:00",
-  //     "updatedAt": "2021-08-13 09:13:49",
-  //     "id": 1,
-  //     "address": [
-  //       "北京市",
-  //       "市辖区",
-  //       "东城区"
-  //     ],
-  //     "gender": 1,
-  //     "birthday": "2020-11-02 08:00:00",
-  //     "avatar": "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-  //     "description": "Consectetur autem asperiores magni dignissimos quas aspernatur. Voluptatem velit molestiae quisquam fugiat dignissimos sunt. Non qui voluptatem rerum officiis modi accusamus sunt. Debitis similique eelaboriosam culpa itaque velit et enim. Error maiores volu 3333, test",
-  //     "country": "Moldova",
-  //     "courseAmount": 0,
-  //     "email": "teacher@admin.com",
-  //     "name": "aaa1",
-  //     "phone": "13966456789",
-  //     "profileId": 1,
-  //     "skills": [
-  //       {
-  //         "id": 539,
-  //         "level": 3,
-  //         "name": "C"
-  //       },
-  //       {
-  //         "id": 540,
-  //         "level": 4,
-  //         "name": "Java"
-  //       }
-  //     ],
-  //     "workExperience": [
-  //       {
-  //         "startAt": "1999-07-28 08:00:00",
-  //         "endAt": "2005-01-05 08:00:00",
-  //         "id": 1,
-  //         "company": "Hayes-Medhurst",
-  //         "post": "repudiandaejk",
-  //         "startEnd": "1999-07-28 08:00:00 2005-01-05 08:00:00"
-  //       }
-  //     ],
-  //     "education": [
-  //       {
-  //         "startAt": "1999-01-01 08:00:00",
-  //         "endAt": "2018-04-11 08:00:00",
-  //         "id": 301,
-  //         "level": 2,
-  //         "degree": "BBA",
-  //         "startEnd": "1999-01-01 08:00:00 2018-04-11 08:00:00"
-  //       },
-  //       {
-  //         "startAt": "2010-01-02 08:00:00",
-  //         "endAt": "2011-02-22 08:00:00",
-  //         "id": 9001,
-  //         "level": 4,
-  //         "degree": "BBA",
-  //         "startEnd": "2010-01-02 08:00:00 2011-02-22 08:00:00"
-  //       }
-  //     ]
-  //   },
-  //   "code": 200,
-  //   "msg": "success"
-  // }
 
   const [student, setStudent] = useState();
 
@@ -102,10 +26,6 @@ const StudnetDetail = () => {
     };
     getProfile();
   }, [id]);
-
-  // const Tou = () => {
-  //   <Avatar src={student.avatar} />;
-  // };
 
   return (
     <div
@@ -265,6 +185,6 @@ const StudnetDetail = () => {
 //   };
 // }
 
-StudnetDetail.Layout = DashboardLayout;
+StudentDetail.Layout = DashboardLayout;
 
-export default StudnetDetail;
+export default StudentDetail;
