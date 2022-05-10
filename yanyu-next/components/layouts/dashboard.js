@@ -62,11 +62,30 @@ export default function DashboardLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false);
   const [breadcrumb, setBreadcrumb] = useState(["manager", "Dashboard"]);
 
+  const dfs = (start, target, visited) => {
+    console.log("Visiting Node " + start.value);
+    console.log(visited);
+    if (start.path === target) {
+      console.log("Found the node we're looking for!");
+      visited.push(start.path);
+      console.log(visited);
+      return start.path;
+    }
+
+    for (var i = 0; i < start.subNav.length; i++) {
+      var result = dfs(start.subNav[i], target);
+      if (result != null) {
+        return result;
+      }
+    }
+
+    return null;
+  };
+
   useEffect(() => {
     if (router) {
       const linkPath = router.asPath.split("/");
       linkPath.shift();
-      console.log(linkPath);
       let crumb = ["manager", ...linkPath];
       setBreadcrumb(crumb);
       // setBreadcrumbs(linkPath);
