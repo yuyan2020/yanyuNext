@@ -70,3 +70,7 @@ export async function getStudentById(id) {
 export async function getStudentProfileById(params) {
   return axiosInstance.get("/profile", { params });
 }
+
+export function getCourses(params) {
+  return axiosInstance.get("/courses", { params });
+}

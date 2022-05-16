@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "rc-virtual-list": "^3.4.8",
+    "react-infinite-scroll-component": "^6.1.0",
+    "virtuallist-antd": "^0.7.4-beta.0"
+  }
+}

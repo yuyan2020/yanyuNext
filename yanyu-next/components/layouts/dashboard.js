@@ -44,43 +44,35 @@ const items = [
   ]),
   getItem("Teacher", "Teacher", <TeamOutlined />, [
     getItem(
-      <Link href="/student/studentList/kaka">kakatest</Link>,
-      "kaka",
+      <Link href="/teacher/teacherList">Teacher List</Link>,
+      "Teacher List",
       <ProfileOutlined />
     ),
-    getItem("Team 2", "4"),
   ]),
-  getItem("Course", "sub3", <BarsOutlined />, [
-    getItem("Team 1", "5"),
-    getItem("Team 2", "6"),
+  getItem("Course", "Course", <BarsOutlined />, [
+    getItem(
+      <Link href="/course/allCourse">All Course</Link>,
+      "All Course",
+      <ProfileOutlined />
+    ),
+    getItem(
+      <Link href="/course/addCourse">Add Course</Link>,
+      "Add Course",
+      <ProfileOutlined />
+    ),
+    getItem(
+      <Link href="/course/editCourse">Edit Course</Link>,
+      "Edit Course",
+      <ProfileOutlined />
+    ),
   ]),
-  getItem("Message", "7", <MessageOutlined />),
+  getItem("Message", "message", <MessageOutlined />),
 ];
 
 export default function DashboardLayout({ children }) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [breadcrumb, setBreadcrumb] = useState(["manager", "Dashboard"]);
-
-  const dfs = (start, target, visited) => {
-    console.log("Visiting Node " + start.value);
-    console.log(visited);
-    if (start.path === target) {
-      console.log("Found the node we're looking for!");
-      visited.push(start.path);
-      console.log(visited);
-      return start.path;
-    }
-
-    for (var i = 0; i < start.subNav.length; i++) {
-      var result = dfs(start.subNav[i], target);
-      if (result != null) {
-        return result;
-      }
-    }
-
-    return null;
-  };
 
   useEffect(() => {
     if (router) {
