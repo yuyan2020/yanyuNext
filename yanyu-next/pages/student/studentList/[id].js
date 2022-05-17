@@ -158,33 +158,6 @@ const StudentDetail = () => {
   );
 };
 
-// export async function getStaticProps(context) {
-//   const id = context.params.id;
-//   console.log(id);
-//   const studentData = await getStudentById(id);
-//   return {
-//     props: {
-//       student: studentData,
-//     },
-//   };
-// }
-
-// export async function getStaticPaths() {
-//   return {
-//     paths: [
-//       {
-//         params: { id: "1" },
-//         params: { id: "115" },
-//         params: { id: "119" },
-//         params: { id: "120" },
-//         params: { id: "121" },
-//         params: { id: "122" },
-//       },
-//     ],
-//     fallback: true,
-//   };
-// }
-
 StudentDetail.Layout = DashboardLayout;
 
 export default StudentDetail;

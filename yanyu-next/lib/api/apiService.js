@@ -16,7 +16,6 @@ axiosInstance.interceptors.request.use(
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log("interceptors config=", config);
     }
     return config;
   },
@@ -73,4 +72,8 @@ export async function getStudentProfileById(params) {
 
 export function getCourses(params) {
   return axiosInstance.get("/courses", { params });
+}
+
+export function getCourseDetail(params) {
+  return axiosInstance.get("/courses/detail", { params });
 }

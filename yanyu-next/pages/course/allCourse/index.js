@@ -1,10 +1,14 @@
-import DashboardLayout from "../../components/layouts/dashboard";
+import DashboardLayout from "../../../components/layouts/dashboard";
+import CourseCard from "../../../components/course/courseCard";
+import { divide } from "lodash";
+import { Card, Col, Row } from "antd";
+
 import React, { useState, useEffect } from "react";
 import { List, message, Avatar, Skeleton, Divider } from "antd";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { getCourses } from "../../lib/api/apiService";
+import { getCourses } from "../../../lib/api/apiService";
 
-function AllCourse() {
+function AddCourse() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -15,14 +19,11 @@ function AllCourse() {
     }
     setLoading(true);
     setPage(page + 1);
+
     getCourses({ page: page, limit: 20 })
       .then((res) => {
         const courses = res.data.data.courses;
-        console.log(courses);
-        console.log(page);
-
         setData([...data, ...courses]);
-        console.log(data);
         setLoading(false);
       })
       .catch((err) => {
@@ -36,6 +37,14 @@ function AllCourse() {
   }, []);
 
   return (
+    // <div style={{ display: "flex" }}>
+    //   <CourseCard />
+    //   <CourseCard />
+    //   <CourseCard />
+    //   <CourseCard />
+    //   <CourseCard />
+    //   <CourseCard />
+    // </div>
     <div
       id="scrollableDiv"
       style={{
@@ -55,15 +64,11 @@ function AllCourse() {
           scrollableTarget="scrollableDiv"
         >
           <List
+            grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 4, xl: 4, xxl: 4 }}
             dataSource={data}
             renderItem={(item) => (
               <List.Item key={item.id}>
-                <List.Item.Meta
-                  avatar={<Avatar src={item.cover} />}
-                  title={<a href="https://ant.design">{item.name}</a>}
-                  description={item.detail}
-                />
-                <div>Content</div>
+                <CourseCard item={item} />
               </List.Item>
             )}
           />
@@ -73,6 +78,6 @@ function AllCourse() {
   );
 }
 
-AllCourse.Layout = DashboardLayout;
+AddCourse.Layout = DashboardLayout;
 
-export default AllCourse;
+export default AddCourse;

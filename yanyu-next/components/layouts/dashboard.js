@@ -35,34 +35,34 @@ const items = [
     <InboxOutlined />
   ),
 
-  getItem("Student", "Student", <UserOutlined />, [
+  getItem("Student", "student", <UserOutlined />, [
     getItem(
       <Link href="/student/studentList">StudentList</Link>,
-      "Student List",
+      "studentList",
       <ProfileOutlined />
     ),
   ]),
-  getItem("Teacher", "Teacher", <TeamOutlined />, [
+  getItem("Teacher", "teacher", <TeamOutlined />, [
     getItem(
       <Link href="/teacher/teacherList">Teacher List</Link>,
-      "Teacher List",
+      "teacherList",
       <ProfileOutlined />
     ),
   ]),
-  getItem("Course", "Course", <BarsOutlined />, [
+  getItem("Course", "course", <BarsOutlined />, [
     getItem(
       <Link href="/course/allCourse">All Course</Link>,
-      "All Course",
+      "allCourse",
       <ProfileOutlined />
     ),
     getItem(
       <Link href="/course/addCourse">Add Course</Link>,
-      "Add Course",
+      "addCourse",
       <ProfileOutlined />
     ),
     getItem(
       <Link href="/course/editCourse">Edit Course</Link>,
-      "Edit Course",
+      "editCourse",
       <ProfileOutlined />
     ),
   ]),
@@ -72,15 +72,22 @@ const items = [
 export default function DashboardLayout({ children }) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
-  const [breadcrumb, setBreadcrumb] = useState(["manager", "Dashboard"]);
+  const [breadcrumb, setBreadcrumb] = useState(["manager", "Overview"]);
+  const [selectedKey, setSelectedKey] = useState(["Overview"]);
 
   useEffect(() => {
     if (router) {
       const linkPath = router.asPath.split("/");
       linkPath.shift();
-      let crumb = ["manager", ...linkPath];
-      setBreadcrumb(crumb);
-      // setBreadcrumbs(linkPath);
+
+      if (linkPath[0] === "dashboard") {
+        setBreadcrumb(["manager", "Overview"]);
+        setSelectedKey(["Overview"]);
+      } else {
+        setBreadcrumb(["manager", ...linkPath]);
+        setSelectedKey([...linkPath]);
+        console.log(selectedKey);
+      }
     }
   }, [router]);
 
@@ -110,7 +117,9 @@ export default function DashboardLayout({ children }) {
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          defaultOpenKeys={[selectedKey[0]]}
+          selectedKeys={selectedKey}
+          // openKeys={selectedKey}
           items={items}
           onClick={onClick}
         />

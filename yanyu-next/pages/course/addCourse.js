@@ -1,98 +1,75 @@
 import DashboardLayout from "../../components/layouts/dashboard";
+import React, { useState, useEffect } from "react";
+import { List, message, Avatar, Skeleton, Divider } from "antd";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { getCourses } from "../../lib/api/apiService";
 
-const DocsPage = () => (
-  <div>
-    <h1>add Course</h1>
+function AllCourse() {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
 
-    <p>
-      Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur purus
-      ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque ornare
-      aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit dignissim
-      sodales ut eu. Vel quam elementum pulvinar etiam non quam lacus
-      suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae purus
-      faucibus ornare suspendisse. Erat imperdiet sed euismod nisi. Tellus orci
-      ac auctor augue mauris augue. Malesuada bibendum arcu vitae elementum
-      curabitur vitae nunc sed velit. Diam vulputate ut pharetra sit. Quam id
-      leo in vitae turpis massa sed elementum tempus. Vulputate sapien nec
-      sagittis aliquam malesuada.
-    </p>
-    <p>
-      Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur purus
-      ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque ornare
-      aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit dignissim
-      sodales ut eu. Vel quam elementum pulvinar etiam non quam lacus
-      suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae purus
-      faucibus ornare suspendisse. Erat imperdiet sed euismod nisi. Tellus orci
-      ac auctor augue mauris augue. Malesuada bibendum arcu vitae elementum
-      curabitur vitae nunc sed velit. Diam vulputate ut pharetra sit. Quam id
-      leo in vitae turpis massa sed elementum tempus. Vulputate sapien nec
-      sagittis aliquam malesuada.
-    </p>
-    <p>
-      Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur purus
-      ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque ornare
-      aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit dignissim
-      sodales ut eu. Vel quam elementum pulvinar etiam non quam lacus
-      suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae purus
-      faucibus ornare suspendisse. Erat imperdiet sed euismod nisi. Tellus orci
-      ac auctor augue mauris augue. Malesuada bibendum arcu vitae elementum
-      curabitur vitae nunc sed velit. Diam vulputate ut pharetra sit. Quam id
-      leo in vitae turpis massa sed elementum tempus. Vulputate sapien nec
-      sagittis aliquam malesuada.
-    </p>
-    <p>
-      Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur purus
-      ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque ornare
-      aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit dignissim
-      sodales ut eu. Vel quam elementum pulvinar etiam non quam lacus
-      suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae purus
-      faucibus ornare suspendisse. Erat imperdiet sed euismod nisi. Tellus orci
-      ac auctor augue mauris augue. Malesuada bibendum arcu vitae elementum
-      curabitur vitae nunc sed velit. Diam vulputate ut pharetra sit. Quam id
-      leo in vitae turpis massa sed elementum tempus. Vulputate sapien nec
-      sagittis aliquam malesuada.
-    </p>
-    <p>
-      Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur purus
-      ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque ornare
-      aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit dignissim
-      sodales ut eu. Vel quam elementum pulvinar etiam non quam lacus
-      suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae purus
-      faucibus ornare suspendisse. Erat imperdiet sed euismod nisi. Tellus orci
-      ac auctor augue mauris augue. Malesuada bibendum arcu vitae elementum
-      curabitur vitae nunc sed velit. Diam vulputate ut pharetra sit. Quam id
-      leo in vitae turpis massa sed elementum tempus. Vulputate sapien nec
-      sagittis aliquam malesuada.
-    </p>
+  const loadMoreData = () => {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+    setPage(page + 1);
 
-    <p>
-      Massa tincidunt dui ut ornare lectus sit amet. Vivamus arcu felis bibendum
-      ut tristique. Vestibulum lectus mauris ultrices eros in cursus turpis. In
-      massa tempor nec feugiat nisl pretium fusce. In fermentum posuere urna nec
-      tincidunt praesent semper. Lacus suspendisse faucibus interdum posuere
-      lorem ipsum dolor sit. Aenean sed adipiscing diam donec adipiscing
-      tristique risus nec feugiat. Hac habitasse platea dictumst quisque
-      sagittis purus sit amet volutpat. Adipiscing at in tellus integer feugiat.
-      Lacus viverra vitae congue eu. Eget dolor morbi non arcu risus. Tortor
-      pretium viverra suspendisse potenti nullam ac tortor vitae. Mus mauris
-      vitae ultricies leo integer malesuada nunc vel risus.
-    </p>
+    getCourses({ page: page, limit: 20 })
+      .then((res) => {
+        const courses = res.data.data.courses;
+        setData([...data, ...courses]);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
 
-    <p>
-      Porttitor eget dolor morbi non arcu. Dignissim diam quis enim lobortis
-      scelerisque fermentum dui faucibus in. Tristique senectus et netus et
-      malesuada fames. Sed blandit libero volutpat sed cras ornare arcu dui
-      vivamus. Non odio euismod lacinia at quis risus sed vulputate odio.
-      Laoreet suspendisse interdum consectetur libero. Eget mauris pharetra et
-      ultrices neque. Adipiscing commodo elit at imperdiet dui accumsan sit amet
-      nulla. Hendrerit gravida rutrum quisque non tellus orci ac auctor. Ut
-      consequat semper viverra nam libero justo laoreet sit. Mauris pellentesque
-      pulvinar pellentesque habitant morbi tristique senectus et netus. Lectus
-      nulla at volutpat diam. Ornare arcu odio ut sem.
-    </p>
-  </div>
-);
+  useEffect(() => {
+    loadMoreData();
+  }, []);
 
-DocsPage.Layout = DashboardLayout;
+  return (
+    <div
+      id="scrollableDiv"
+      style={{
+        height: "100vh",
+        overflow: "auto",
+        padding: "0 16px",
+        width: "100%",
+      }}
+    >
+      {data ? (
+        <InfiniteScroll
+          dataLength={data.length}
+          next={loadMoreData}
+          hasMore={true}
+          loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+          endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
+          scrollableTarget="scrollableDiv"
+        >
+          <List
+            dataSource={data}
+            renderItem={(item) => (
+              <List.Item key={item.id}>
+                <List.Item.Meta
+                  avatar={<Avatar src={item.cover} />}
+                  title={<a href="https://ant.design">{item.name}</a>}
+                  description={item.detail}
+                />
+                <div>Content</div>
+              </List.Item>
+            )}
+          />
+        </InfiniteScroll>
+      ) : null}
+    </div>
+  );
+}
 
-export default DocsPage;
+AllCourse.Layout = DashboardLayout;
+
+export default AllCourse;
