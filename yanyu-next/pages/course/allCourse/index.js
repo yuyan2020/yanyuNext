@@ -1,14 +1,12 @@
 import DashboardLayout from "../../../components/layouts/dashboard";
 import CourseCard from "../../../components/course/courseCard";
-import { divide } from "lodash";
-import { Card, Col, Row } from "antd";
 
 import React, { useState, useEffect } from "react";
-import { List, message, Avatar, Skeleton, Divider } from "antd";
+import { List, Skeleton, Divider } from "antd";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { getCourses } from "../../../lib/api/apiService";
 
-function AddCourse() {
+function AllCourse() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -37,14 +35,6 @@ function AddCourse() {
   }, []);
 
   return (
-    // <div style={{ display: "flex" }}>
-    //   <CourseCard />
-    //   <CourseCard />
-    //   <CourseCard />
-    //   <CourseCard />
-    //   <CourseCard />
-    //   <CourseCard />
-    // </div>
     <div
       id="scrollableDiv"
       style={{
@@ -68,7 +58,7 @@ function AddCourse() {
             dataSource={data}
             renderItem={(item) => (
               <List.Item key={item.id}>
-                <CourseCard item={item} />
+                <CourseCard item={item} readMore={true} key={item.id} />
               </List.Item>
             )}
           />
@@ -78,6 +68,6 @@ function AddCourse() {
   );
 }
 
-AddCourse.Layout = DashboardLayout;
+AllCourse.Layout = DashboardLayout;
 
-export default AddCourse;
+export default AllCourse;

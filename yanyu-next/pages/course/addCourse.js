@@ -4,7 +4,7 @@ import { List, message, Avatar, Skeleton, Divider } from "antd";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { getCourses } from "../../lib/api/apiService";
 
-function AllCourse() {
+function AddCourse() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -70,6 +70,6 @@ function AllCourse() {
   );
 }
 
-AllCourse.Layout = DashboardLayout;
+AddCourse.Layout = DashboardLayout;
 
-export default AllCourse;
+export default AddCourse;

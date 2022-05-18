@@ -1,11 +1,6 @@
-import { Card, Avatar, Button, Divider, Row, Col } from "antd";
+import { Card, Button, Divider } from "antd";
 import { useRouter } from "next/router";
-import {
-  EditOutlined,
-  EllipsisOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 
 const { Meta } = Card;
 
@@ -16,9 +11,14 @@ export default function CourseCard(props) {
     justifyContent: "space-between",
     marginTop: "0px",
   };
+  const gridStyle = {
+    width: "25%",
+    textAlign: "center",
+    marginTop: "10px",
+  };
 
   const handleCourseDetail = () => {
-    router.push("/course/addCourse/" + props.item.id);
+    router.push("/course/allCourse/" + props.item.id);
   };
   const Detail = () => {
     return (
@@ -47,13 +47,34 @@ export default function CourseCard(props) {
           </span>
           <span>{props.item.maxStudents}</span>
         </div>
-        <Button
-          type="primary"
-          style={{ marginTop: "10px" }}
-          onClick={handleCourseDetail}
-        >
-          Read More
-        </Button>
+        {props.readMore ? (
+          <Button
+            type="primary"
+            style={{ marginTop: "10px" }}
+            onClick={handleCourseDetail}
+          >
+            Read More
+          </Button>
+        ) : (
+          <>
+            <Card.Grid hoverable={false} style={gridStyle}>
+              <h1>{props.item.price}</h1>
+              <span>Price</span>
+            </Card.Grid>
+            <Card.Grid hoverable={false} style={gridStyle}>
+              <h1>{props.item.sales.batches}</h1>
+              <span>Batches</span>
+            </Card.Grid>
+            <Card.Grid hoverable={false} style={gridStyle}>
+              <h1>{props.item.sales.paidAmount}</h1>
+              <span>Students</span>
+            </Card.Grid>
+            <Card.Grid hoverable={false} style={gridStyle}>
+              <h1>{props.item.sales.earnings}</h1>
+              <span>Earnings</span>
+            </Card.Grid>
+          </>
+        )}
       </div>
     );
   };
@@ -65,6 +86,7 @@ export default function CourseCard(props) {
           src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
         />
       }
+      style={props.style}
     >
       <Meta title={props.item.name} />
       <Detail />
