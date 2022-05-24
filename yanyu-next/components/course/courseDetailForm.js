@@ -16,7 +16,7 @@ const draggerProps = {
   name: "file",
   multiple: true,
   action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-  height: "300px",
+  // height: "300px",
 
   onChange(info) {
     const { status } = info.file;
@@ -60,7 +60,6 @@ const courseDetailForm = (props) => {
   return (
     <>
       <Form
-        // {...formItemLayout}
         form={form}
         name="courseDetail"
         onFinish={onFinish}
@@ -133,17 +132,30 @@ const courseDetailForm = (props) => {
             </Form.Item>
           </Col>
         </Row>
-
-        <Row gutter={16}>
-          <Col span={6}>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "stretch",
+          }}
+        >
+          <div
+            style={{
+              flex: 6,
+              backgroundColor: "green",
+            }}
+          >
             <Form.Item label="Start Date" name="startDate">
-              <DatePicker style={{ width: "100%" }} />
+              <DatePicker style={{ width: "100%", marginRight: "20px" }} />
             </Form.Item>
             <Form.Item
               label="Price"
               name="price"
               rules={[
-                { required: true, message: "Please input your course price!" },
+                {
+                  required: true,
+                  message: "Please input your course price!",
+                },
               ]}
             >
               <Input placeholder="course name" />
@@ -172,13 +184,28 @@ const courseDetailForm = (props) => {
             >
               <Input placeholder="course name" />
             </Form.Item>
-          </Col>
-          <Col span={9}>
-            <Form.Item name="description" label="Description">
-              <Input.TextArea rows={13} />
-            </Form.Item>
-          </Col>
-          <Col span={9}>
+          </div>
+          <div
+            style={{
+              flex: 9,
+              backgroundColor: "red",
+              // paddingRight: "16px",
+            }}
+          >
+            <div style={{ display: "flex" }}>
+              <Form.Item name="description" label="Description">
+                <Input.TextArea style={{ alignItems: "stretch" }} />
+              </Form.Item>
+            </div>
+          </div>
+
+          <div
+            style={{
+              flex: 9,
+              backgroundColor: "green",
+              // paddingRight: "16px",
+            }}
+          >
             <Form.Item label="Cover" name="cover" rules={[{}]}>
               <Dragger {...draggerProps}>
                 <p className="ant-upload-drag-icon">
@@ -193,8 +220,8 @@ const courseDetailForm = (props) => {
                 </p>
               </Dragger>
             </Form.Item>
-          </Col>
-        </Row>
+          </div>
+        </div>
 
         <Row>
           <Form.Item>
