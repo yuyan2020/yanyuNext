@@ -8,15 +8,28 @@ import {
   DatePicker,
   message,
   Upload,
+  Spin,
 } from "antd";
+import debounce from "lodash/debounce";
 import { InboxOutlined } from "@ant-design/icons";
 const { Option } = Select;
 const { Dragger } = Upload;
+import { useState, useEffect, useRef, useMemo } from "react";
+import { getCourseCode, getTeachers } from "../../lib/api/apiService";
+const durationUnit = (
+  <Select defaultValue="month" className="select-after">
+    <Option value="year">year</Option>
+    <Option value="month">month</Option>
+    <Option value="day">day</Option>
+    <Option value="week">week</Option>
+    <Option value="hour">hour</Option>
+  </Select>
+);
 const draggerProps = {
   name: "file",
   multiple: true,
   action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-  // height: "300px",
+  height: "300px",
 
   onChange(info) {
     const { status } = info.file;
@@ -36,8 +49,60 @@ const draggerProps = {
     console.log("Dropped files", e.dataTransfer.files);
   },
 };
+
+const DebounceSelect = ({ fetchOptions, debounceTimeout = 800, ...props }) => {
+  const [fetching, setFetching] = useState(false);
+  const [options, setOptions] = useState([]);
+  const fetchRef = useRef(0);
+  const debounceFetcher = useMemo(() => {
+    const loadOptions = (value) => {
+      // fetchRef.current += 1;
+      // const fetchId = fetchRef.current;
+      setOptions([]);
+      setFetching(true);
+
+      value &&
+        fetchOptions(value).then((newOptions) => {
+          // if (fetchId !== fetchRef.current) {
+          //   // for fetch callback order
+          //   return;
+          // }
+
+          console.log(newOptions);
+          setOptions(newOptions);
+          setFetching(false);
+        });
+    };
+
+    return debounce(loadOptions, debounceTimeout);
+  }, [fetchOptions, debounceTimeout]);
+  return (
+    <Select
+      showSearch
+      filterOption={false}
+      onSearch={debounceFetcher}
+      notFoundContent={fetching ? <Spin size="small" /> : null}
+      {...props}
+      options={options}
+    />
+  );
+};
+
+async function fetchTeacherList(username) {
+  // console.log("fetching user", username);
+  return getTeachers({ query: username }).then((res) =>
+    res.data.data.teachers.map((user) => ({
+      label: user.name,
+      value: user.id,
+    }))
+  );
+}
+
 const courseDetailForm = (props) => {
   const [form] = Form.useForm();
+  const [course, setCourse] = useState();
+  const [code, setCode] = useState();
+  const [teacher, setTeacher] = useState([]);
 
   const onChange = (value) => {
     console.log(`selected ${value}`);
@@ -57,9 +122,19 @@ const courseDetailForm = (props) => {
   const onSearch = (val) => {
     console.log("search:", val);
   };
+
+  useEffect(() => {
+    getCourseCode().then((res) => {
+      setCode(res.data.data);
+
+      form.setFieldsValue({ courseCode: res.data.data });
+    });
+  }, []);
+
   return (
     <>
       <Form
+        // {...formItemLayout}
         form={form}
         name="courseDetail"
         onFinish={onFinish}
@@ -69,6 +144,7 @@ const courseDetailForm = (props) => {
         // }}
         scrollToFirstError
         layout="vertical"
+        // initialValues={{ courseCode: code ? code : null }}
       >
         <Row gutter={16}>
           <Col span={6}>
@@ -90,25 +166,18 @@ const courseDetailForm = (props) => {
                 { required: true, message: "Please select your teacher!" },
               ]}
             >
-              <Select
-                showSearch
-                style={{ width: "100%" }}
-                placeholder="Select a teacher"
-                optionFilterProp="children"
-                onChange={onChange}
-                onFocus={onFocus}
-                onBlur={onBlur}
-                onSearch={onSearch}
-                filterOption={(input, option) =>
-                  option.props.children
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                <Option value="jack">Jack</Option>
-                <Option value="lucy">Lucy</Option>
-                <Option value="tom">Tom</Option>
-              </Select>
+              <DebounceSelect
+                // mode="multiple"
+                // value={teacher}
+                placeholder="Select Teacher"
+                fetchOptions={fetchTeacherList}
+                // onChange={(newValue) => {
+                //   setTeacher(newValue);
+                // }}
+                style={{
+                  width: "100%",
+                }}
+              />
             </Form.Item>
           </Col>
           <Col span={6}>
@@ -128,25 +197,19 @@ const courseDetailForm = (props) => {
               name="courseCode"
               rules={[{ required: true }]}
             >
-              <Input placeholder="" defaultValue="waiting to be fetched" />
+              <Input
+                placeholder=""
+                defaultValue="waiting to be fetched"
+                disabled
+              />
             </Form.Item>
           </Col>
         </Row>
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            alignItems: "stretch",
-          }}
-        >
-          <div
-            style={{
-              flex: 6,
-              backgroundColor: "green",
-            }}
-          >
+
+        <Row gutter={16}>
+          <Col span={6}>
             <Form.Item label="Start Date" name="startDate">
-              <DatePicker style={{ width: "100%", marginRight: "20px" }} />
+              <DatePicker style={{ width: "100%" }} />
             </Form.Item>
             <Form.Item
               label="Price"
@@ -158,7 +221,7 @@ const courseDetailForm = (props) => {
                 },
               ]}
             >
-              <Input placeholder="course name" />
+              <Input prefix="$" placeholder="Course price" />
             </Form.Item>
             <Form.Item
               label="Student Limit"
@@ -170,7 +233,7 @@ const courseDetailForm = (props) => {
                 },
               ]}
             >
-              <Input placeholder="course name" />
+              <Input placeholder="Student Limit" />
             </Form.Item>
             <Form.Item
               label="Duration"
@@ -182,30 +245,15 @@ const courseDetailForm = (props) => {
                 },
               ]}
             >
-              <Input placeholder="course name" />
+              <Input placeholder="course duration" addonAfter={durationUnit} />
             </Form.Item>
-          </div>
-          <div
-            style={{
-              flex: 9,
-              backgroundColor: "red",
-              // paddingRight: "16px",
-            }}
-          >
-            <div style={{ display: "flex" }}>
-              <Form.Item name="description" label="Description">
-                <Input.TextArea style={{ alignItems: "stretch" }} />
-              </Form.Item>
-            </div>
-          </div>
-
-          <div
-            style={{
-              flex: 9,
-              backgroundColor: "green",
-              // paddingRight: "16px",
-            }}
-          >
+          </Col>
+          <Col span={9}>
+            <Form.Item name="description" label="Description">
+              <Input.TextArea rows={13} />
+            </Form.Item>
+          </Col>
+          <Col span={9}>
             <Form.Item label="Cover" name="cover" rules={[{}]}>
               <Dragger {...draggerProps}>
                 <p className="ant-upload-drag-icon">
@@ -220,8 +268,8 @@ const courseDetailForm = (props) => {
                 </p>
               </Dragger>
             </Form.Item>
-          </div>
-        </div>
+          </Col>
+        </Row>
 
         <Row>
           <Form.Item>

@@ -77,3 +77,11 @@ export function getCourses(params) {
 export function getCourseDetail(params) {
   return axiosInstance.get("/courses/detail", { params });
 }
+
+export function getCourseCode() {
+  return axiosInstance.get("/courses/code");
+}
+
+export function getTeachers(params) {
+  return axiosInstance.get("/teachers", { params });
+}
