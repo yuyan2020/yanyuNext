@@ -47,7 +47,7 @@ const { Panel } = Collapse;
 
 function courseDetail() {
   const router = useRouter();
-  const { id } = router.query;
+
   const [detail, setDetail] = useState();
   const [timeTable, setTimetable] = useState({
     Monday: "",
@@ -72,17 +72,20 @@ function courseDetail() {
   };
 
   useEffect(() => {
-    getCourseDetail({ id: id }).then((res) => {
-      console.log(res);
-      setDetail(res.data.data);
-      //   有个奇怪的问题就是这边保存了那边没更新！！？
-      //   为什么不能直接detail.schedule
-      const schedule = res.data.data.schedule;
-      console.log(schedule);
-      getTimetable(schedule);
-      console.log(timeTable);
-    });
-  }, []);
+    if (router.isReady) {
+      const { id } = router.query;
+      getCourseDetail({ id: id }).then((res) => {
+        console.log(res);
+        setDetail(res.data.data);
+        //   有个奇怪的问题就是这边保存了那边没更新！！？
+        //   为什么不能直接detail.schedule
+        const schedule = res.data.data.schedule;
+        console.log(schedule);
+        getTimetable(schedule);
+        console.log(timeTable);
+      });
+    }
+  }, [router.isReady]);
 
   return detail && timeTable ? (
     <Row style={{ width: "100%" }}>

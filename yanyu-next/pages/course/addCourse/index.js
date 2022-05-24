@@ -2,9 +2,9 @@ import DashboardLayout from "../../../components/layouts/dashboard";
 import React, { useState, useEffect } from "react";
 import { Steps, Button, message, Row } from "antd";
 import style from "./addCourse.module.css";
+// import "./addCourse.css";
 import CourseDetailForm from "../../../components/course/courseDetailForm";
 import CourseScheduleForm from "../../../components/course/courseScheduleForm";
-
 const { Step } = Steps;
 
 function AddCourse() {
