@@ -9,6 +9,7 @@ import axios from "axios";
 import { AES } from "crypto-js";
 import { useRouter } from "next/router";
 import { login } from "../lib/api/apiService";
+import { useEffect } from "react";
 
 const { Title } = Typography;
 
@@ -29,6 +30,12 @@ export default function Home() {
       })
       .catch((err) => console.log(err));
   };
+
+  useEffect(() => {
+    if (localStorage.getItem("accessToken")) {
+      router.push("/dashboard");
+    }
+  }, []);
 
   return (
     <>

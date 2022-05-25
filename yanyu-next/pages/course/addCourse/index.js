@@ -9,6 +9,9 @@ const { Step } = Steps;
 
 function AddCourse() {
   const [current, setCurrent] = useState(0);
+  const [course, setCourse] = useState({});
+  const [code, setCode] = useState();
+  const [selectedType, setSelectedType] = useState([]);
   const [availableNavigate, setAvailableNavigate] = useState([0]);
 
   const next = () => {
@@ -21,7 +24,20 @@ function AddCourse() {
   };
 
   const stepContent = [
-    { content: <CourseDetailForm nextStep={next} /> },
+    {
+      content: (
+        <CourseDetailForm
+          nextStep={next}
+          step={current}
+          data={course}
+          setData={setCourse}
+          uid={code}
+          setUid={setCode}
+          t={selectedType}
+          st={setSelectedType}
+        />
+      ),
+    },
     {
       content: <CourseScheduleForm />,
     },

@@ -85,3 +85,11 @@ export function getCourseCode() {
 export function getTeachers(params) {
   return axiosInstance.get("/teachers", { params });
 }
+
+export function getTeacherById(id) {
+  return axiosInstance.get(`/teachers/${id}`);
+}
+
+export function getCourseType() {
+  return axiosInstance.get("/courses/type");
+}
