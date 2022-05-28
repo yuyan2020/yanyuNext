@@ -1,18 +1,21 @@
 import DashboardLayout from "../../../components/layouts/dashboard";
 import React, { useState, useEffect } from "react";
-import { Steps, Button, message, Row } from "antd";
+import { Steps, Button, message, Row, Result } from "antd";
 import style from "./addCourse.module.css";
 // import "./addCourse.css";
 import CourseDetailForm from "../../../components/course/courseDetailForm";
 import CourseScheduleForm from "../../../components/course/courseScheduleForm";
+import { useRouter } from "next/router";
 const { Step } = Steps;
 
 function AddCourse() {
+  const router = useRouter();
   const [current, setCurrent] = useState(0);
-  const [course, setCourse] = useState({});
-  const [code, setCode] = useState();
-  const [selectedType, setSelectedType] = useState([]);
+  const [id, setId] = useState();
+
   const [availableNavigate, setAvailableNavigate] = useState([0]);
+
+  const [scheduleId, setScheduleId] = useState();
 
   const next = () => {
     setCurrent(current + 1);
@@ -27,14 +30,14 @@ function AddCourse() {
     {
       content: (
         <CourseDetailForm
-          nextStep={next}
-          step={current}
-          data={course}
-          setData={setCourse}
-          uid={code}
-          setUid={setCode}
-          t={selectedType}
-          st={setSelectedType}
+        // nextStep={next}
+        // step={current}
+        // data={course}
+        // setData={setCourse}
+        // uid={code}
+        // setUid={setCode}
+        // t={selectedType}
+        // st={setSelectedType}
         />
       ),
     },
@@ -63,9 +66,44 @@ function AddCourse() {
         <Step title="Success" />
       </Steps>
 
-      <div className={style.stepsContent}>{stepContent[current].content}</div>
+      <div className={current === 0 ? style.tableDisplay : style.notDisplay}>
+        <CourseDetailForm
+          nextStep={next}
+          setSId={setScheduleId}
+          setId={setId}
+        />
+      </div>
 
-      <div className={style.stepsAction}>
+      <div className={current === 1 ? style.tableDisplay : style.notDisplay}>
+        <CourseScheduleForm sId={scheduleId} id={id} nextStep={next} />
+      </div>
+
+      <div className={current === 2 ? style.tableDisplay : style.notDisplay}>
+        <div className={style.stepsContent}>
+          <Result
+            status="success"
+            title="Successfully Added Course!"
+            subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+            extra={[
+              <Button
+                type="primary"
+                key="console"
+                onClick={() => router.push(`/course/addCourse/${id}`)}
+              >
+                Go Course
+              </Button>,
+              <Button
+                key="buy"
+                onClick={() => router.reload(window.location.pathname)}
+              >
+                Create Again
+              </Button>,
+            ]}
+          />
+        </div>
+      </div>
+
+      {/* <div className={style.stepsAction}>
         {current === 2 && (
           <Button
             type="primary"
@@ -84,7 +122,7 @@ function AddCourse() {
             Previous
           </Button>
         )}
-      </div>
+      </div> */}
     </div>
   );
 }

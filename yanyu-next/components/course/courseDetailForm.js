@@ -16,6 +16,7 @@ const { Option } = Select;
 const { Dragger } = Upload;
 import { useState, useEffect, useRef, useMemo } from "react";
 import {
+  addCourse,
   getCourseCode,
   getCourseType,
   getTeacherById,
@@ -30,31 +31,6 @@ const durationUnit = (
     <Option value="hour">hour</Option>
   </Select>
 );
-
-// const draggerProps = {
-//   name: "file",
-//   multiple: true,
-//   action: "http://localhost:3000/",
-//   height: "300px",
-
-//   onChange(info) {
-//     const { status } = info.file;
-
-//     if (status !== "uploading") {
-//       console.log(info.file, info.fileList);
-//     }
-
-//     if (status === "done") {
-//       message.success(`${info.file.name} file uploaded successfully.`);
-//     } else if (status === "error") {
-//       message.error(`${info.file.name} file upload failed.`);
-//     }
-//   },
-
-//   onDrop(e) {
-//     console.log("Dropped files", e.dataTransfer.files);
-//   },
-// };
 
 const DebounceSelect = ({ fetchOptions, debounceTimeout = 800, ...props }) => {
   const [fetching, setFetching] = useState(false);
@@ -105,10 +81,10 @@ async function fetchTeacherList(username) {
 }
 
 const courseDetailForm = (props) => {
-  const [form] = Form.useForm();
-  const [cType, setCType] = useState([]);
+  const [code, setCode] = useState();
 
-  const [teacher, setTeacher] = useState([]);
+  const [form] = Form.useForm();
+  const [Type, setType] = useState([]);
 
   const normFile = (e) => {
     console.log("Upload event:", e);
@@ -120,101 +96,49 @@ const courseDetailForm = (props) => {
     return e?.fileList;
   };
 
-  const onChange = (values) => {
-    console.log(values.target.value);
-  };
-
-  const getTeacherName = async (id) => {
-    const name = getTeacherById(id).then((res) => res.data.data.name);
-    return name;
-  };
-
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
-    let selectType;
-    if (props.t) {
-      console.log(props.t);
-      console.log(cType);
-      selectType = props.t.map((k) => ({
-        id: k,
-        name: cType[parseInt(k)].name,
-      }));
-    }
-    props.setData({
+    const selectedType = values.type.map((t) => parseInt(t));
+
+    addCourse({
       name: values.courseName,
       uid: values.courseCode,
       detail: values.description,
-      startTime: values.startDate,
-      price: values.price,
-      maxStudents: values.studentLimit,
-      duration: values.duration,
+      startTime: values.startDate.format("YYYY-MM-DD"),
+      price: parseInt(values.price),
+      maxStudents: parseInt(values.studentLimit),
+      duration: parseInt(values.duration),
       durationUnit: 1,
-      cover: "string",
       teacherId: values.teacher,
-      type: selectType,
+      type: selectedType,
+    }).then((res) => {
+      props.setSId(res.data.data.scheduleId);
+      props.setId(res.data.data.id);
     });
-
-    console.log("zheli");
-    console.log(props.data);
     props.nextStep();
-  };
-
-  const onBlur = () => {
-    console.log("blur");
-  };
-
-  const onFocus = () => {
-    console.log("focus");
-  };
-  const onSearch = (val) => {
-    console.log("search:", val);
   };
 
   useEffect(() => {
     if (!props.uid) {
       getCourseCode().then((res) => {
-        props.setUid(res.data.data);
+        setCode(res.data.data);
         form.setFieldsValue({ courseCode: res.data.data });
       });
     }
   }, []);
 
   useEffect(() => {
-    if (props.data.name) {
-      console.log(props.data);
-      (async function () {
-        let name = await getTeacherName(props.data.teacherId);
-        form.setFieldsValue({
-          courseCode: props.uid ? props.uid : null,
-          courseName: props.data.name,
-          teacher: name,
-          type: props.data.type.map((t) => t.name),
-          price: props.data.price,
-          studentLimit: props.data.maxStudents,
-          duration: props.data.duration,
-        });
-      })();
-    }
-  }, [props.current]);
-
-  useEffect(() => {
-    getCourseType().then((res) => setCType(res.data.data));
+    getCourseType().then((res) => setType(res.data.data));
   }, []);
 
   return (
     <>
       <Form
-        // {...formItemLayout}
         form={form}
         name="courseDetail"
         onFinish={onFinish}
-        // initialValues={{
-        //   residence: ["zhejiang", "hangzhou", "xihu"],
-        //   prefix: "86",
-        // }}
         scrollToFirstError
         layout="vertical"
-        // initialValues={{ courseCode: code ? code : null }}
       >
         <Row gutter={16}>
           <Col span={6}>
@@ -237,13 +161,8 @@ const courseDetailForm = (props) => {
               ]}
             >
               <DebounceSelect
-                // mode="multiple"
-                // value={teacher}
                 placeholder="Select Teacher"
                 fetchOptions={fetchTeacherList}
-                // onChange={(newValue) => {
-                //   setTeacher(newValue);
-                // }}
                 style={{
                   width: "100%",
                 }}
@@ -265,11 +184,9 @@ const courseDetailForm = (props) => {
                   width: "100%",
                 }}
                 placeholder="Please select type"
-                defaultValue={[]}
-                onChange={(e) => props.st(e)}
               >
-                {cType
-                  ? cType.map((t) => <Option key={t.id}>{t.name}</Option>)
+                {Type
+                  ? Type.map((t) => <Option key={t.id}>{t.name}</Option>)
                   : null}
               </Select>
             </Form.Item>
@@ -288,7 +205,7 @@ const courseDetailForm = (props) => {
         <Row gutter={16}>
           <Col span={6}>
             <Form.Item label="Start Date" name="startDate">
-              <DatePicker style={{ width: "100%" }} />
+              <DatePicker style={{ width: "100%" }} format="YYYY/MM/DD" />
             </Form.Item>
             <Form.Item
               label="Price"
@@ -333,20 +250,6 @@ const courseDetailForm = (props) => {
             </Form.Item>
           </Col>
           <Col span={9}>
-            {/* <Form.Item label="Cover" name="cover" rules={[{}]}>
-              <Dragger {...draggerProps}>
-                <p className="ant-upload-drag-icon">
-                  <InboxOutlined />
-                </p>
-                <p className="ant-upload-text">
-                  Click or drag file to this area to upload
-                </p>
-                <p className="ant-upload-hint">
-                  Support for a single or bulk upload. Strictly prohibit from
-                  uploading company data or other band files
-                </p>
-              </Dragger>
-            </Form.Item> */}
             <Form.Item label="Dragger">
               <Form.Item
                 name="dragger"

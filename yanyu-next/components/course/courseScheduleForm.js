@@ -1,9 +1,38 @@
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Space, Row, Col } from "antd";
+import { Button, Form, Input, Row, Col, Select, TimePicker } from "antd";
+const { Option } = Select;
+import moment from "moment";
+import { addSchedule } from "../../lib/api/apiService";
 
-const courseScheduleForm = () => {
+const courseScheduleForm = (props) => {
   const onFinish = (values) => {
     console.log("Received values of form:", values);
+    const firstChapter = {
+      content: values.content,
+      name: values.chapterName,
+      order: 1,
+    };
+    const restChapters = values.chapters.map((c, index) => ({
+      content: c.content,
+      name: c.chapterName,
+      order: index + 2,
+    }));
+    const firstTime = values.classTime + " " + values.time.format("HH:mm:ss");
+    const restTimes = values.times.map(
+      (t) => t.classTime + " " + t.time.format("HH:mm:ss")
+    );
+    const schedule = {
+      courseId: props.id,
+      scheduleId: props.sId,
+      chapters: [firstChapter, ...restChapters],
+      classTime: [firstTime, ...restTimes],
+    };
+    addSchedule(schedule).then((res) => {
+      if (res.status === 200) {
+        props.nextStep();
+      }
+    });
+    console.log(schedule);
   };
   return (
     <>
@@ -25,28 +54,28 @@ const courseScheduleForm = () => {
             <Row gutter={16}>
               <Col span={8}>
                 <Form.Item
-                  name="first"
+                  name="chapterName"
                   rules={[
                     {
                       required: true,
-                      message: "Missing first name",
+                      message: "Missing chapter name",
                     },
                   ]}
                 >
-                  <Input placeholder="First Name" />
+                  <Input placeholder="Chapter Name" />
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item
-                  name="last"
+                  name="content"
                   rules={[
                     {
                       required: true,
-                      message: "Missing last name",
+                      message: "Missing chapter content",
                     },
                   ]}
                 >
-                  <Input placeholder="Last Name" />
+                  <Input placeholder="Chapter Content" />
                 </Form.Item>
               </Col>
             </Row>
@@ -58,29 +87,29 @@ const courseScheduleForm = () => {
                       <Col span={8}>
                         <Form.Item
                           {...restField}
-                          name={[name, "first"]}
+                          name={[name, "chapterName"]}
                           rules={[
                             {
                               required: true,
-                              message: "Missing first name",
+                              message: "Missing chapter name",
                             },
                           ]}
                         >
-                          <Input placeholder="First Name" />
+                          <Input placeholder="Chapter Name" />
                         </Form.Item>
                       </Col>
                       <Col span={12}>
                         <Form.Item
                           {...restField}
-                          name={[name, "last"]}
+                          name={[name, "content"]}
                           rules={[
                             {
                               required: true,
-                              message: "Missing last name",
+                              message: "Missing chapter content",
                             },
                           ]}
                         >
-                          <Input placeholder="Last Name" />
+                          <Input placeholder="Chapter Content" />
                         </Form.Item>
                       </Col>
                       <Col span={2}>
@@ -97,7 +126,7 @@ const courseScheduleForm = () => {
                           block
                           icon={<PlusOutlined />}
                         >
-                          Add field
+                          Add chapters
                         </Button>
                       </Form.Item>
                     </Col>
@@ -110,28 +139,44 @@ const courseScheduleForm = () => {
             <Row gutter={16}>
               <Col span={8}>
                 <Form.Item
-                  name="first"
+                  name="classTime"
                   rules={[
                     {
                       required: true,
-                      message: "Missing first name",
+                      message: "Missing Class Time",
                     },
                   ]}
                 >
-                  <Input placeholder="First Name" />
+                  <Select
+                    defaultValue=""
+                    // style={{ width: 120 }}
+                    // onChange={handleChange}
+                  >
+                    <Option value="Sunday">Sunday</Option>
+                    <Option value="Monday">Monday</Option>
+                    <Option value="Tuesday">Tuesday</Option>
+                    <Option value="Wednesday">Wednesday</Option>
+                    <Option value="Thursday">Thursday</Option>
+                    <Option value="Friday">Friday</Option>
+                    <Option value="Saturday">Saturday</Option>
+                  </Select>
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item
-                  name="last"
+                  name="time"
                   rules={[
                     {
                       required: true,
-                      message: "Missing last name",
+                      message: "Missing time",
                     },
                   ]}
                 >
-                  <Input placeholder="Last Name" />
+                  <TimePicker
+                    defaultOpenValue={moment("00:00:00", "HH:mm:ss")}
+                    placeholder="Select Time"
+                    style={{ width: "100%" }}
+                  />
                 </Form.Item>
               </Col>
             </Row>
@@ -143,29 +188,45 @@ const courseScheduleForm = () => {
                       <Col span={8}>
                         <Form.Item
                           {...restField}
-                          name={[name, "first"]}
+                          name={[name, "classTime"]}
                           rules={[
                             {
                               required: true,
-                              message: "Missing first name",
+                              message: "Missing class time",
                             },
                           ]}
                         >
-                          <Input placeholder="First Name" />
+                          <Select
+                            defaultValue=""
+                            // style={{ width: 120 }}
+                            // onChange={handleChange}
+                          >
+                            <Option value="Sunday">Sunday</Option>
+                            <Option value="Monday">Monday</Option>
+                            <Option value="Tuesday">Tuesday</Option>
+                            <Option value="Wednesday">Wednesday</Option>
+                            <Option value="Thursday">Thursday</Option>
+                            <Option value="Friday">Friday</Option>
+                            <Option value="Saturday">Saturday</Option>
+                          </Select>
                         </Form.Item>
                       </Col>
                       <Col span={12}>
                         <Form.Item
                           {...restField}
-                          name={[name, "last"]}
+                          name={[name, "time"]}
                           rules={[
                             {
                               required: true,
-                              message: "Missing last name",
+                              message: "Missing time",
                             },
                           ]}
                         >
-                          <Input placeholder="Last Name" />
+                          <TimePicker
+                            defaultOpenValue={moment("00:00:00", "HH:mm:ss")}
+                            placeholder="Select Time"
+                            style={{ width: "100%" }}
+                          />
                         </Form.Item>
                       </Col>
                       <Col span={2}>
@@ -192,7 +253,7 @@ const courseScheduleForm = () => {
                           block
                           icon={<PlusOutlined />}
                         >
-                          Add field
+                          Add class time
                         </Button>
                       </Form.Item>
                     </Col>
@@ -201,6 +262,13 @@ const courseScheduleForm = () => {
               )}
             </Form.List>
           </Col>
+        </Row>
+        <Row>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
         </Row>
       </Form>
     </>

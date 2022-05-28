@@ -93,3 +93,11 @@ export function getTeacherById(id) {
 export function getCourseType() {
   return axiosInstance.get("/courses/type");
 }
+
+export function addCourse(params) {
+  return axiosInstance.post("/courses", params);
+}
+
+export function addSchedule(params) {
+  return axiosInstance.put("/courses/schedule", params);
+}
