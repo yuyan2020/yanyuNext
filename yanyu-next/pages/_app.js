@@ -4,6 +4,7 @@ import "../styles/dashboard.css";
 import DefaultLayout from "../components/layouts/default";
 import "../styles/addCourse.css";
 
+
 class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props;
