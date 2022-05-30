@@ -1,98 +1,106 @@
 import DashboardLayout from "../../components/layouts/dashboard";
+import { Select, Spin, Row, Col, Tabs } from "antd";
+import debounce from "lodash/debounce";
+import React, { useMemo, useRef, useState } from "react";
+import { getCourseDetail, getCourses } from "../../lib/api/apiService";
+import CourseDetailForm from "../../components/course/courseDetailForm";
+import CourseScheduleForm from "../../components/course/courseScheduleForm";
+const { TabPane } = Tabs;
 
-const DocsPage = () => (
-  <div>
-    <h1>edit course</h1>
+function DebounceSelect({ fetchOptions, debounceTimeout = 800, ...props }) {
+  const [fetching, setFetching] = useState(false);
+  const [options, setOptions] = useState([]);
+  const debounceFetcher = useMemo(() => {
+    const loadOptions = (value) => {
+      setOptions([]);
+      setFetching(true);
 
-    <p>
-      Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur purus
-      ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque ornare
-      aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit dignissim
-      sodales ut eu. Vel quam elementum pulvinar etiam non quam lacus
-      suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae purus
-      faucibus ornare suspendisse. Erat imperdiet sed euismod nisi. Tellus orci
-      ac auctor augue mauris augue. Malesuada bibendum arcu vitae elementum
-      curabitur vitae nunc sed velit. Diam vulputate ut pharetra sit. Quam id
-      leo in vitae turpis massa sed elementum tempus. Vulputate sapien nec
-      sagittis aliquam malesuada.
-    </p>
-    <p>
-      Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur purus
-      ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque ornare
-      aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit dignissim
-      sodales ut eu. Vel quam elementum pulvinar etiam non quam lacus
-      suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae purus
-      faucibus ornare suspendisse. Erat imperdiet sed euismod nisi. Tellus orci
-      ac auctor augue mauris augue. Malesuada bibendum arcu vitae elementum
-      curabitur vitae nunc sed velit. Diam vulputate ut pharetra sit. Quam id
-      leo in vitae turpis massa sed elementum tempus. Vulputate sapien nec
-      sagittis aliquam malesuada.
-    </p>
-    <p>
-      Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur purus
-      ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque ornare
-      aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit dignissim
-      sodales ut eu. Vel quam elementum pulvinar etiam non quam lacus
-      suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae purus
-      faucibus ornare suspendisse. Erat imperdiet sed euismod nisi. Tellus orci
-      ac auctor augue mauris augue. Malesuada bibendum arcu vitae elementum
-      curabitur vitae nunc sed velit. Diam vulputate ut pharetra sit. Quam id
-      leo in vitae turpis massa sed elementum tempus. Vulputate sapien nec
-      sagittis aliquam malesuada.
-    </p>
-    <p>
-      Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur purus
-      ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque ornare
-      aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit dignissim
-      sodales ut eu. Vel quam elementum pulvinar etiam non quam lacus
-      suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae purus
-      faucibus ornare suspendisse. Erat imperdiet sed euismod nisi. Tellus orci
-      ac auctor augue mauris augue. Malesuada bibendum arcu vitae elementum
-      curabitur vitae nunc sed velit. Diam vulputate ut pharetra sit. Quam id
-      leo in vitae turpis massa sed elementum tempus. Vulputate sapien nec
-      sagittis aliquam malesuada.
-    </p>
-    <p>
-      Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur purus
-      ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque ornare
-      aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit dignissim
-      sodales ut eu. Vel quam elementum pulvinar etiam non quam lacus
-      suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae purus
-      faucibus ornare suspendisse. Erat imperdiet sed euismod nisi. Tellus orci
-      ac auctor augue mauris augue. Malesuada bibendum arcu vitae elementum
-      curabitur vitae nunc sed velit. Diam vulputate ut pharetra sit. Quam id
-      leo in vitae turpis massa sed elementum tempus. Vulputate sapien nec
-      sagittis aliquam malesuada.
-    </p>
+      value &&
+        fetchOptions(value).then((newOptions) => {
+          setOptions(newOptions);
+          setFetching(false);
+        });
+    };
+    return debounce(loadOptions, debounceTimeout);
+  }, [fetchOptions, debounceTimeout]);
 
-    <p>
-      Massa tincidunt dui ut ornare lectus sit amet. Vivamus arcu felis bibendum
-      ut tristique. Vestibulum lectus mauris ultrices eros in cursus turpis. In
-      massa tempor nec feugiat nisl pretium fusce. In fermentum posuere urna nec
-      tincidunt praesent semper. Lacus suspendisse faucibus interdum posuere
-      lorem ipsum dolor sit. Aenean sed adipiscing diam donec adipiscing
-      tristique risus nec feugiat. Hac habitasse platea dictumst quisque
-      sagittis purus sit amet volutpat. Adipiscing at in tellus integer feugiat.
-      Lacus viverra vitae congue eu. Eget dolor morbi non arcu risus. Tortor
-      pretium viverra suspendisse potenti nullam ac tortor vitae. Mus mauris
-      vitae ultricies leo integer malesuada nunc vel risus.
-    </p>
+  return (
+    <Select
+      showSearch
+      filterOption={false}
+      onSearch={debounceFetcher}
+      notFoundContent={fetching ? <Spin size="small" /> : null}
+      {...props}
+      options={options}
+    />
+  );
+}
 
-    <p>
-      Porttitor eget dolor morbi non arcu. Dignissim diam quis enim lobortis
-      scelerisque fermentum dui faucibus in. Tristique senectus et netus et
-      malesuada fames. Sed blandit libero volutpat sed cras ornare arcu dui
-      vivamus. Non odio euismod lacinia at quis risus sed vulputate odio.
-      Laoreet suspendisse interdum consectetur libero. Eget mauris pharetra et
-      ultrices neque. Adipiscing commodo elit at imperdiet dui accumsan sit amet
-      nulla. Hendrerit gravida rutrum quisque non tellus orci ac auctor. Ut
-      consequat semper viverra nam libero justo laoreet sit. Mauris pellentesque
-      pulvinar pellentesque habitant morbi tristique senectus et netus. Lectus
-      nulla at volutpat diam. Ornare arcu odio ut sem.
-    </p>
-  </div>
-);
+const EditCourse = () => {
+  const [queryType, setQueryType] = useState("uid");
+  const [course, setCourse] = useState();
 
-DocsPage.Layout = DashboardLayout;
+  async function fetchCourseList(value) {
+    return getCourses({ [queryType]: value }).then((res) =>
+      res.data.data.courses.map((course) => ({
+        label: course.name + " " + course.teacherName + " " + course.uid,
+        value: course.id,
+      }))
+    );
+  }
 
-export default DocsPage;
+  return (
+    <div style={{ width: "100%" }}>
+      <Row style={{ width: "100%", marginBottom: "10px" }}>
+        <Col span={2}>
+          <Select
+            defaultValue="Code"
+            style={{ width: 120 }}
+            onChange={(value) => setQueryType(value)}
+          >
+            <Option value="uid">Code</Option>
+            <Option value="name">Name</Option>
+            <Option value="type">Category</Option>
+          </Select>
+        </Col>
+        <Col span={14}>
+          <DebounceSelect
+            placeholder="Select Course"
+            fetchOptions={fetchCourseList}
+            style={{
+              width: "100%",
+            }}
+            onChange={(newValue) => {
+              getCourseDetail({ id: newValue }).then((res) => {
+                const course = res.data.data;
+                console.log(course);
+                setCourse(course);
+              });
+            }}
+          />
+        </Col>
+      </Row>
+      <Tabs defaultActiveKey="1">
+        <TabPane tab="Course Detail" key="1">
+          <Row style={{ width: "100%" }}>
+            <CourseDetailForm mode={false} course={course} />
+          </Row>
+        </TabPane>
+        <TabPane tab="Course Schedule" key="2">
+          <Row style={{ width: "100%" }}>
+            <CourseScheduleForm
+              chapters={course.schedule.chapters}
+              classTime={course.schedule.classTime}
+              id={course.id}
+              sId={course.schedule.id}
+            />
+          </Row>
+        </TabPane>
+      </Tabs>
+    </div>
+  );
+};
+
+EditCourse.Layout = DashboardLayout;
+
+export default EditCourse;

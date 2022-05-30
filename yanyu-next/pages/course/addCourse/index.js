@@ -71,6 +71,7 @@ function AddCourse() {
           nextStep={next}
           setSId={setScheduleId}
           setId={setId}
+          mode={true}
         />
       </div>
 

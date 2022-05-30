@@ -35,7 +35,7 @@ const courseScheduleForm = (props) => {
     console.log(schedule);
   };
   return (
-    <>
+    <div style={{ width: "100%" }}>
       <Row>
         <Col span={12}>
           <h1 style={{ float: "left" }}>Chapters</h1>
@@ -51,34 +51,73 @@ const courseScheduleForm = (props) => {
       >
         <Row>
           <Col span={12}>
-            <Row gutter={16}>
-              <Col span={8}>
-                <Form.Item
-                  name="chapterName"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Missing chapter name",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Chapter Name" />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="content"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Missing chapter content",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Chapter Content" />
-                </Form.Item>
-              </Col>
-            </Row>
+            {props.chapters ? (
+              props.chapters.map((chapter) => (
+                <Row gutter={16}>
+                  <Col span={8}>
+                    <Form.Item
+                      name={"chapterName" + chapter.name}
+                      initialValue={chapter.name}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Missing chapter name",
+                        },
+                      ]}
+                    >
+                      <Input placeholder="Chapter Name" />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name={"content" + chapter.content}
+                      initialValue={chapter.content}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Missing chapter content",
+                        },
+                      ]}
+                    >
+                      <Input placeholder="Chapter Content" />
+                    </Form.Item>
+                  </Col>
+                  <Col span={2}>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </Col>
+                </Row>
+              ))
+            ) : (
+              <Row gutter={16}>
+                <Col span={8}>
+                  <Form.Item
+                    name="chapterName"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Missing chapter name",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Chapter Name" />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    name="content"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Missing chapter content",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Chapter Content" />
+                  </Form.Item>
+                </Col>
+              </Row>
+            )}
+
             <Form.List name="chapters">
               {(fields, { add, remove }) => (
                 <>
@@ -136,50 +175,102 @@ const courseScheduleForm = (props) => {
             </Form.List>
           </Col>
           <Col span={12}>
-            <Row gutter={16}>
-              <Col span={8}>
-                <Form.Item
-                  name="classTime"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Missing Class Time",
-                    },
-                  ]}
-                >
-                  <Select
-                    defaultValue=""
-                    // style={{ width: 120 }}
-                    // onChange={handleChange}
+            {props.classTime ? (
+              props.classTime.map((time) => (
+                <Row gutter={16}>
+                  <Col span={8}>
+                    <Form.Item
+                      name={"classTime" + time.split(" ")[0]}
+                      initialValue={time.split(" ")[0]}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Missing Class Time",
+                        },
+                      ]}
+                    >
+                      <Select
+                        defaultValue={""}
+                        // style={{ width: 120 }}
+                        // onChange={handleChange}
+                      >
+                        <Option value="Sunday">Sunday</Option>
+                        <Option value="Monday">Monday</Option>
+                        <Option value="Tuesday">Tuesday</Option>
+                        <Option value="Wednesday">Wednesday</Option>
+                        <Option value="Thursday">Thursday</Option>
+                        <Option value="Friday">Friday</Option>
+                        <Option value="Saturday">Saturday</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name={"time" + time.split(" ")[1]}
+                      initialValue={moment(time.split(" ")[1], "HH:mm:ss")}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Missing time",
+                        },
+                      ]}
+                    >
+                      <TimePicker
+                        // defaultOpenValue={moment("00:00:00", "HH:mm:ss")}
+                        placeholder="Select Time"
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              ))
+            ) : (
+              <Row gutter={16}>
+                <Col span={8}>
+                  <Form.Item
+                    name="classTime"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Missing Class Time",
+                      },
+                    ]}
                   >
-                    <Option value="Sunday">Sunday</Option>
-                    <Option value="Monday">Monday</Option>
-                    <Option value="Tuesday">Tuesday</Option>
-                    <Option value="Wednesday">Wednesday</Option>
-                    <Option value="Thursday">Thursday</Option>
-                    <Option value="Friday">Friday</Option>
-                    <Option value="Saturday">Saturday</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="time"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Missing time",
-                    },
-                  ]}
-                >
-                  <TimePicker
-                    defaultOpenValue={moment("00:00:00", "HH:mm:ss")}
-                    placeholder="Select Time"
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
+                    <Select
+                      defaultValue=""
+                      // style={{ width: 120 }}
+                      // onChange={handleChange}
+                    >
+                      <Option value="Sunday">Sunday</Option>
+                      <Option value="Monday">Monday</Option>
+                      <Option value="Tuesday">Tuesday</Option>
+                      <Option value="Wednesday">Wednesday</Option>
+                      <Option value="Thursday">Thursday</Option>
+                      <Option value="Friday">Friday</Option>
+                      <Option value="Saturday">Saturday</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    name="time"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Missing time",
+                      },
+                    ]}
+                  >
+                    <TimePicker
+                      defaultOpenValue={moment("00:00:00", "HH:mm:ss")}
+                      placeholder="Select Time"
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            )}
+
             <Form.List name="times">
               {(fields, { add, remove }) => (
                 <>
@@ -271,7 +362,7 @@ const courseScheduleForm = (props) => {
           </Form.Item>
         </Row>
       </Form>
-    </>
+    </div>
   );
 };
 

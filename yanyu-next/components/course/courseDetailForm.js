@@ -10,6 +10,7 @@ import {
   Upload,
   Spin,
 } from "antd";
+import moment from "moment";
 import debounce from "lodash/debounce";
 import { InboxOutlined } from "@ant-design/icons";
 const { Option } = Select;
@@ -24,18 +25,17 @@ import {
 } from "../../lib/api/apiService";
 const durationUnit = (
   <Select defaultValue="month" className="select-after">
-    <Option value="year">year</Option>
-    <Option value="month">month</Option>
-    <Option value="day">day</Option>
-    <Option value="week">week</Option>
-    <Option value="hour">hour</Option>
+    <Option value="4">year</Option>
+    <Option value="3">month</Option>
+    <Option value="1">day</Option>
+    <Option value="2">week</Option>
+    <Option value="0">hour</Option>
   </Select>
 );
 
 const DebounceSelect = ({ fetchOptions, debounceTimeout = 800, ...props }) => {
   const [fetching, setFetching] = useState(false);
   const [options, setOptions] = useState([]);
-  const fetchRef = useRef(0);
   const debounceFetcher = useMemo(() => {
     const loadOptions = (value) => {
       // fetchRef.current += 1;
@@ -119,7 +119,7 @@ const courseDetailForm = (props) => {
   };
 
   useEffect(() => {
-    if (!props.uid) {
+    if (!props.uid && props.mode) {
       getCourseCode().then((res) => {
         setCode(res.data.data);
         form.setFieldsValue({ courseCode: res.data.data });
@@ -131,8 +131,25 @@ const courseDetailForm = (props) => {
     getCourseType().then((res) => setType(res.data.data));
   }, []);
 
+  useEffect(() => {
+    if (props.course) {
+      form.setFieldsValue({
+        courseName: props.course.name,
+        courseCode: props.course.uid,
+        description: props.course.detail,
+        startDate: moment(props.course.createdAt),
+        price: props.course.price,
+        studentLimit: props.course.maxStudent,
+        duration: props.course.duration,
+        durationUnit: props.course.durationUnit,
+        teacher: props.course.teacherName,
+        type: props.course.type.map((t) => t.name),
+      });
+    }
+  }, [props.course]);
+
   return (
-    <>
+    <div style={{ width: "100%" }}>
       <Form
         form={form}
         name="courseDetail"
@@ -276,12 +293,12 @@ const courseDetailForm = (props) => {
         <Row>
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Create Course
+              {props.mode ? "Create Course" : "Update Course"}
             </Button>
           </Form.Item>
         </Row>
       </Form>
-    </>
+    </div>
   );
 };
 
