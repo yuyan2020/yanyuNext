@@ -101,3 +101,7 @@ export function addCourse(params) {
 export function addSchedule(params) {
   return axiosInstance.put("/courses/schedule", params);
 }
+
+export function getMessage(params) {
+  return axiosInstance.get("/message", { params });
+}

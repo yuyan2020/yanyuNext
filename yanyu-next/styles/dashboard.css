@@ -22,3 +22,13 @@
 
   background: #fff;
 }
+
+.site-layout-background {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icon-hover:hover {
+  color: #1890ff;
+}
