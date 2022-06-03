@@ -164,14 +164,13 @@ export default function DashboardLayout({ children }) {
               content={
                 <Tabs
                   defaultActiveKey="1"
-                  centered
-                  animated={{ inkBar: true, tabPane: false }}
-                  style={{
-                    width: "400px",
-                    height: "500px",
-                    overflow: "auto",
-                  }}
-                  hideAdd={true}
+
+                  // animated={{ inkBar: true, tabPane: false }}
+                  // style={{
+                  //   width: "400px",
+                  //   height: "500px",
+                  //   overflow: "auto",
+                  // }}
                 >
                   <TabPane tab="notification" key="1">
                     {notification ? (
