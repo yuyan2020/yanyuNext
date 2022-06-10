@@ -228,20 +228,43 @@ export default function DashboardLayout({ children }) {
             <Popover
               content={
                 <Tabs
+                  id="scrollDiv"
                   defaultActiveKey="1"
+<<<<<<< Updated upstream
                   style={{
                     width: "400px",
                     height: "500px",
+=======
+                  // animated={{ inkBar: true, tabPane: false }}
+                  style={{
+                    width: "400px",
+                    height: "500px",
+                    overflow: "auto",
+>>>>>>> Stashed changes
                   }}
                 >
                   <TabPane tab="notification" key="1">
                     {notification ? (
+<<<<<<< Updated upstream
                       <div
                         id="scrollableDiv"
                         style={{
                           height: 400,
                           overflow: "auto",
                         }}
+=======
+                      <InfiniteScroll
+                        dataLength={70}
+                        next={loadMoreNotification}
+                        hasMore={true}
+                        loader={
+                          <Skeleton avatar paragraph={{ rows: 1 }} active />
+                        }
+                        endMessage={
+                          <Divider plain>It is all, nothing more 🤐</Divider>
+                        }
+                        scrollableTarget={document.getElementById("scrollDiv")}
+>>>>>>> Stashed changes
                       >
                         <InfiniteScroll
                           dataLength={notification.length}
