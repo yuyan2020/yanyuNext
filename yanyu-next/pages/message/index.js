@@ -1,13 +1,24 @@
 import DashboardLayout from "../../components/layouts/dashboard";
 import messageContext from "../../Providers/messageProvider/message-context";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
+import { Divider } from "antd";
 
-const DocsPage = () => {
-  const { unReadCount, markAsRead } = useContext(messageContext);
+const Message = () => {
+  const { unReadCount, markAsRead, newMessages } = useContext(messageContext);
+  useEffect(() => {
+    console.log(
+      "%cindex.js line:8 newMessages",
+      "color: #007acc;",
+      newMessages
+    );
+  }, [newMessages]);
 
   return (
     <div>
-      <h1>{unReadCount}</h1>
+      <h1>
+        {unReadCount}
+        {newMessages.length > 0 ? newMessages[0].id : 0}
+      </h1>
 
       <p>
         Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur
@@ -99,6 +110,6 @@ const DocsPage = () => {
   );
 };
 
-DocsPage.Layout = DashboardLayout;
+Message.Layout = DashboardLayout;
 
-export default DocsPage;
+export default Message;

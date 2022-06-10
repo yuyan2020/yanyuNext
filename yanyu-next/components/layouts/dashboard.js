@@ -8,6 +8,7 @@ import {
   Avatar,
   Skeleton,
   Divider,
+  Badge,
 } from "antd";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
@@ -22,13 +23,19 @@ import {
   BellOutlined,
 } from "@ant-design/icons";
 import "antd/dist/antd.css";
-import { useState, createElement, useEffect } from "react";
+import { useState, createElement, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 // import { useRouter } from "next/router";
 import { TeamOutlined } from "@ant-design/icons";
 import Link from "next/link";
-import { logout } from "../../lib/api/apiService";
+import {
+  getUnReadMessageCount,
+  logout,
+  messageEvent,
+} from "../../lib/api/apiService";
 import { getMessage } from "../../lib/api/apiService";
+import messageContext from "../../Providers/messageProvider/message-context";
+import MessageState from "../../Providers/messageProvider/MessageState";
 
 const { Header, Sider, Content, Footer } = Layout;
 const { TabPane } = Tabs;
@@ -80,16 +87,25 @@ const items = [
       <ProfileOutlined />
     ),
   ]),
-  getItem("Message", "message", <MessageOutlined />),
+  getItem(<Link href="/message">Message</Link>, "message", <MessageOutlined />),
 ];
 
 export default function DashboardLayout({ children }) {
+  const {
+    unReadCount,
+    newMessages,
+    markAsRead,
+    setUnReadCount,
+    addUnreadCount,
+    receiveNewMessage,
+  } = useContext(messageContext);
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [breadcrumb, setBreadcrumb] = useState(["manager", "Overview"]);
   const [selectedKey, setSelectedKey] = useState(["Overview"]);
   const [notification, setNotification] = useState();
   const [page, setPage] = useState(1);
+  const [totalNotification, setTotalNotification] = useState();
 
   useEffect(() => {
     if (router) {
@@ -107,6 +123,52 @@ export default function DashboardLayout({ children }) {
     }
   }, [router]);
 
+  useEffect(() => {
+    getUnReadMessageCount().then((res) =>
+      setUnReadCount(res.data.data.receive.notification.unread)
+    );
+  }, []);
+
+  useEffect(() => {
+    const sse = messageEvent();
+    sse.onmessage = (event) => {
+      let { data } = event;
+
+      data = JSON.parse(data || {});
+
+      if (data.type === "message") {
+        if (data.content) {
+          console.log(
+            "%cdashboard.js line:136 newMessage",
+            "color: #007acc;",
+            data.content
+          );
+          receiveNewMessage(data.content);
+          addUnreadCount();
+
+          // setNotification([newMessage, ...notification]);
+          // if (newMessage.length > 0) {
+          //   setNewMessage([data.content, ...newMessage]);
+          //   addUnreadCount();
+          // } else {
+          //   setNewMessage(data.content);
+          //   addUnreadCount();
+          // }
+        }
+      }
+    };
+
+    return () => {
+      sse.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (newMessages.length > 0) {
+      setNotification([...newMessages, ...notification]);
+    }
+  }, [newMessages]);
+
   const toggle = () => {
     setCollapsed(!collapsed);
   };
@@ -121,22 +183,25 @@ export default function DashboardLayout({ children }) {
   };
 
   const onClick = (e) => {
-    // console.log(e.keyPath);
     let crumb = ["manager", ...e.keyPath.reverse()];
-    // setBreadcrumb(crumb);
   };
 
   const loadMoreNotification = () => {
-    getMessage({ page: page, limit: 20, type: "notification" })
+    setPage(page + 1);
+    getMessage({ page: page + 1, limit: 20, type: "notification" })
       .then((res) => {
         const moreNotification = res.data.data.messages;
         setNotification([...notification, ...moreNotification]);
-        setPage(page + 1);
+        // setTotalNotification(res.data.data.total);
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
+  // useEffect(() => {
+  //   loadMoreNotification();
+  // }, []);
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -164,44 +229,53 @@ export default function DashboardLayout({ children }) {
               content={
                 <Tabs
                   defaultActiveKey="1"
-
-                  // animated={{ inkBar: true, tabPane: false }}
-                  // style={{
-                  //   width: "400px",
-                  //   height: "500px",
-                  //   overflow: "auto",
-                  // }}
+                  style={{
+                    width: "400px",
+                    height: "500px",
+                  }}
                 >
                   <TabPane tab="notification" key="1">
                     {notification ? (
-                      <InfiniteScroll
-                        dataLength={66}
-                        next={loadMoreNotification}
-                        hasMore={true}
-                        loader={
-                          <Skeleton avatar paragraph={{ rows: 1 }} active />
-                        }
-                        endMessage={
-                          <Divider plain>It is all, nothing more 🤐</Divider>
-                        }
-                        scrollableTarget="scrollableDiv"
+                      <div
+                        id="scrollableDiv"
+                        style={{
+                          height: 400,
+                          overflow: "auto",
+                        }}
                       >
-                        <List
-                          dataSource={notification}
-                          renderItem={(item) => (
-                            <List.Item key={item.createdAt}>
-                              <List.Item.Meta
-                                avatar={<Avatar />}
-                                title={item.from.nickname}
-                                description={item.from.nickname}
-                              />
-                              <div>{item.content}</div>
-                            </List.Item>
-                          )}
-                        />
-                      </InfiniteScroll>
+                        <InfiniteScroll
+                          dataLength={notification.length}
+                          next={loadMoreNotification}
+                          hasMore={notification.length < totalNotification}
+                          loader={
+                            <Skeleton avatar paragraph={{ rows: 1 }} active />
+                          }
+                          endMessage={
+                            <Divider plain>It is all, nothing more 🤐</Divider>
+                          }
+                          scrollableTarget="scrollableDiv"
+                        >
+                          <List
+                            dataSource={notification}
+                            renderItem={(item) => (
+                              <List.Item
+                                key={item.id}
+                                style={{ opacity: item.status ? 0.6 : 1 }}
+                              >
+                                <List.Item.Meta
+                                  avatar={<Avatar />}
+                                  title={item.from.nickname}
+                                  description={item.from.nickname}
+                                />
+                                <div>{item.content}</div>
+                              </List.Item>
+                            )}
+                          />
+                        </InfiniteScroll>
+                      </div>
                     ) : null}
                   </TabPane>
+
                   <TabPane tab="message" key="2">
                     Content of Tab Pane 2
                   </TabPane>
@@ -210,29 +284,34 @@ export default function DashboardLayout({ children }) {
               trigger="click"
               placement="bottomLeft"
             >
-              <BellOutlined
-                style={{
-                  fontSize: "20px",
-                  marginRight: "35px",
-                  cursor: "pointer",
-                }}
-                className="icon-hover"
-                onClick={() => {
-                  getMessage({
-                    limit: 20,
-                    page: page,
-                    type: "notification",
-                  }).then((res) => {
-                    setNotification(res.data.data.messages);
-                    setPage(page + 1);
-                  });
-                }}
-              />
+              <Badge count={unReadCount}>
+                <BellOutlined
+                  style={{
+                    fontSize: "20px",
+
+                    cursor: "pointer",
+                  }}
+                  className="icon-hover"
+                  onClick={() => {
+                    if (!notification) {
+                      getMessage({
+                        limit: 20,
+                        page: page,
+                        type: "notification",
+                      }).then((res) => {
+                        setNotification(res.data.data.messages);
+                        setTotalNotification(res.data.data.total);
+                      });
+                    }
+                  }}
+                />
+              </Badge>
             </Popover>
 
             <LogoutOutlined
               style={{
                 fontSize: "20px",
+                marginLeft: "35px",
                 marginRight: "25px",
                 cursor: "pointer",
               }}

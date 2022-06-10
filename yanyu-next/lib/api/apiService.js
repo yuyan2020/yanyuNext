@@ -105,3 +105,13 @@ export function addSchedule(params) {
 export function getMessage(params) {
   return axiosInstance.get("/message", { params });
 }
+
+export function getUnReadMessageCount() {
+  return axiosInstance.get("/message/statistics");
+}
+
+export function messageEvent() {
+  return new EventSource(
+    `http://cms.chtoma.com/api/message/subscribe?userId=${localStorage.serId}`
+  );
+}
