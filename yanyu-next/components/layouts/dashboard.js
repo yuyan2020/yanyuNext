@@ -138,11 +138,6 @@ export default function DashboardLayout({ children }) {
 
       if (data.type === "message") {
         if (data.content) {
-          console.log(
-            "%cdashboard.js line:136 newMessage",
-            "color: #007acc;",
-            data.content
-          );
           receiveNewMessage(data.content);
           addUnreadCount();
 
