@@ -1,111 +1,128 @@
 import DashboardLayout from "../../components/layouts/dashboard";
 import messageContext from "../../Providers/messageProvider/message-context";
-import { useContext, useEffect } from "react";
-import { Divider } from "antd";
+import { useContext, useEffect, useState, createElement } from "react";
+import { Divider, List, Avatar, Skeleton, Space } from "antd";
+import { FieldTimeOutlined } from "@ant-design/icons";
+import { getMessage, updateMessage } from "../../lib/api/apiService";
+import InfiniteScroll from "react-infinite-scroll-component";
+
+const IconText = ({ icon, text }) => (
+  <Space>
+    {createElement(icon)}
+    {text}
+  </Space>
+);
+
+const listItemStyleUnread = {
+  opacity: 1,
+};
+
+const listItemStyleReaded = {
+  opacity: 0.6,
+};
 
 const Message = () => {
-  const { unReadCount, markAsRead, newMessages } = useContext(messageContext);
+  const {
+    unReadCount,
+    newMessages,
+    markAsRead,
+    setUnReadCount,
+    addUnreadCount,
+    receiveNewMessage,
+    reduceUnreadCount,
+  } = useContext(messageContext);
+  const [notification, setNotification] = useState();
+  const [page, setPage] = useState(1);
+  const [totalNotification, setTotalNotification] = useState();
+
+  const loadMoreNotification = () => {
+    setPage(page + 1);
+    getMessage({ page: page + 1, limit: 20, type: "notification" })
+      .then((res) => {
+        const moreNotification = res.data.data.messages;
+        setNotification([...notification, ...moreNotification]);
+        // setTotalNotification(res.data.data.total);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
-    console.log(
-      "%cindex.js line:8 newMessages",
-      "color: #007acc;",
-      newMessages
-    );
+    getMessage({
+      limit: 20,
+      page: page,
+      userId: 3,
+    }).then((res) => {
+      setNotification(res.data.data.messages);
+      setTotalNotification(res.data.data.total);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (newMessages.length > 0) {
+      setNotification([...newMessages, ...notification]);
+    }
   }, [newMessages]);
 
+  // useEffect(() => {
+  //   console.log(
+  //     "%cindex.js line:8 newMessages",
+  //     "color: #007acc;",
+  //     newMessages
+  //   );
+  // }, [newMessages]);
+
   return (
-    <div>
-      <h1>
-        {unReadCount}
-        {newMessages.length > 0 ? newMessages[0].id : 0}
-      </h1>
-
-      <p>
-        Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur
-        purus ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque
-        ornare aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit
-        dignissim sodales ut eu. Vel quam elementum pulvinar etiam non quam
-        lacus suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae
-        purus faucibus ornare suspendisse. Erat imperdiet sed euismod nisi.
-        Tellus orci ac auctor augue mauris augue. Malesuada bibendum arcu vitae
-        elementum curabitur vitae nunc sed velit. Diam vulputate ut pharetra
-        sit. Quam id leo in vitae turpis massa sed elementum tempus. Vulputate
-        sapien nec sagittis aliquam malesuada.
-      </p>
-      <p>
-        Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur
-        purus ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque
-        ornare aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit
-        dignissim sodales ut eu. Vel quam elementum pulvinar etiam non quam
-        lacus suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae
-        purus faucibus ornare suspendisse. Erat imperdiet sed euismod nisi.
-        Tellus orci ac auctor augue mauris augue. Malesuada bibendum arcu vitae
-        elementum curabitur vitae nunc sed velit. Diam vulputate ut pharetra
-        sit. Quam id leo in vitae turpis massa sed elementum tempus. Vulputate
-        sapien nec sagittis aliquam malesuada.
-      </p>
-      <p>
-        Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur
-        purus ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque
-        ornare aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit
-        dignissim sodales ut eu. Vel quam elementum pulvinar etiam non quam
-        lacus suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae
-        purus faucibus ornare suspendisse. Erat imperdiet sed euismod nisi.
-        Tellus orci ac auctor augue mauris augue. Malesuada bibendum arcu vitae
-        elementum curabitur vitae nunc sed velit. Diam vulputate ut pharetra
-        sit. Quam id leo in vitae turpis massa sed elementum tempus. Vulputate
-        sapien nec sagittis aliquam malesuada.
-      </p>
-      <p>
-        Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur
-        purus ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque
-        ornare aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit
-        dignissim sodales ut eu. Vel quam elementum pulvinar etiam non quam
-        lacus suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae
-        purus faucibus ornare suspendisse. Erat imperdiet sed euismod nisi.
-        Tellus orci ac auctor augue mauris augue. Malesuada bibendum arcu vitae
-        elementum curabitur vitae nunc sed velit. Diam vulputate ut pharetra
-        sit. Quam id leo in vitae turpis massa sed elementum tempus. Vulputate
-        sapien nec sagittis aliquam malesuada.
-      </p>
-      <p>
-        Ultrices mi tempus imperdiet nulla. Aliquet sagittis id consectetur
-        purus ut faucibus pulvinar elementum. Mauris pharetra et ultrices neque
-        ornare aenean. Ornare quam viverra orci sagittis. Vitae nunc sed velit
-        dignissim sodales ut eu. Vel quam elementum pulvinar etiam non quam
-        lacus suspendisse faucibus. Suspendisse potenti nullam ac tortor vitae
-        purus faucibus ornare suspendisse. Erat imperdiet sed euismod nisi.
-        Tellus orci ac auctor augue mauris augue. Malesuada bibendum arcu vitae
-        elementum curabitur vitae nunc sed velit. Diam vulputate ut pharetra
-        sit. Quam id leo in vitae turpis massa sed elementum tempus. Vulputate
-        sapien nec sagittis aliquam malesuada.
-      </p>
-
-      <p>
-        Massa tincidunt dui ut ornare lectus sit amet. Vivamus arcu felis
-        bibendum ut tristique. Vestibulum lectus mauris ultrices eros in cursus
-        turpis. In massa tempor nec feugiat nisl pretium fusce. In fermentum
-        posuere urna nec tincidunt praesent semper. Lacus suspendisse faucibus
-        interdum posuere lorem ipsum dolor sit. Aenean sed adipiscing diam donec
-        adipiscing tristique risus nec feugiat. Hac habitasse platea dictumst
-        quisque sagittis purus sit amet volutpat. Adipiscing at in tellus
-        integer feugiat. Lacus viverra vitae congue eu. Eget dolor morbi non
-        arcu risus. Tortor pretium viverra suspendisse potenti nullam ac tortor
-        vitae. Mus mauris vitae ultricies leo integer malesuada nunc vel risus.
-      </p>
-
-      <p>
-        Porttitor eget dolor morbi non arcu. Dignissim diam quis enim lobortis
-        scelerisque fermentum dui faucibus in. Tristique senectus et netus et
-        malesuada fames. Sed blandit libero volutpat sed cras ornare arcu dui
-        vivamus. Non odio euismod lacinia at quis risus sed vulputate odio.
-        Laoreet suspendisse interdum consectetur libero. Eget mauris pharetra et
-        ultrices neque. Adipiscing commodo elit at imperdiet dui accumsan sit
-        amet nulla. Hendrerit gravida rutrum quisque non tellus orci ac auctor.
-        Ut consequat semper viverra nam libero justo laoreet sit. Mauris
-        pellentesque pulvinar pellentesque habitant morbi tristique senectus et
-        netus. Lectus nulla at volutpat diam. Ornare arcu odio ut sem.
-      </p>
+    <div style={{ width: "100%" }}>
+      <h1>Recent Messages</h1>
+      {notification ? (
+        <InfiniteScroll
+          dataLength={notification.length}
+          next={loadMoreNotification}
+          hasMore={notification.length < totalNotification}
+          loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+          endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
+          scrollableTarget="scrollableDiv"
+        >
+          <List
+            dataSource={notification}
+            renderItem={(item) => (
+              <List.Item
+                key={item.id}
+                style={{ opacity: item.status ? 0.6 : 1 }}
+                onClick={() => {
+                  if (!item.status) {
+                    updateMessage({ ids: [item.id], status: 1 }).then((res) => {
+                      // const deepCopyNotification = [...notification]
+                      setNotification((prev) =>
+                        prev.map((i) =>
+                          i.id === item.id ? { ...i, status: 1 } : i
+                        )
+                      );
+                      reduceUnreadCount();
+                    });
+                  }
+                }}
+                actions={[
+                  <IconText
+                    icon={FieldTimeOutlined}
+                    text={item.createdAt}
+                    key={item.id}
+                  />,
+                ]}
+              >
+                <List.Item.Meta
+                  avatar={<Avatar />}
+                  title={item.from.nickname}
+                  description={item.content}
+                />
+                {/* <div>{item.content}</div> */}
+              </List.Item>
+            )}
+          />
+        </InfiniteScroll>
+      ) : null}
     </div>
   );
 };

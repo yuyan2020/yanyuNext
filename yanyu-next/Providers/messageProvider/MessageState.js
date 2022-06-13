@@ -7,6 +7,7 @@ import {
   ADD,
   SET_UNREAD_COUNT,
   RECEIVE_NEW_MESSAGE,
+  REDUCE_UNREAD_COUNT,
 } from "./message-actions";
 import { getUnReadMessageCount } from "../../lib/api/apiService";
 
@@ -45,6 +46,12 @@ const MessageState = (props) => {
     });
   };
 
+  const reduceUnreadCount = () => {
+    dispatch({
+      type: REDUCE_UNREAD_COUNT,
+    });
+  };
+
   return (
     <MessageContext.Provider
       value={{
@@ -54,6 +61,7 @@ const MessageState = (props) => {
         addUnreadCount,
         setUnReadCount,
         receiveNewMessage,
+        reduceUnreadCount,
       }}
     >
       {props.children}

@@ -115,3 +115,7 @@ export function messageEvent() {
     `http://cms.chtoma.com/api/message/subscribe?userId=${localStorage.serId}`
   );
 }
+
+export function updateMessage(params) {
+  return axiosInstance.put("/message", params);
+}

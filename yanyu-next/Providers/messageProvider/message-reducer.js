@@ -3,6 +3,7 @@ import {
   ADD,
   SET_UNREAD_COUNT,
   RECEIVE_NEW_MESSAGE,
+  REDUCE_UNREAD_COUNT,
 } from "./message-actions";
 
 const messageReducer = (state, action) => {
@@ -26,6 +27,12 @@ const messageReducer = (state, action) => {
       return {
         ...state,
         newMessages: [action.payload],
+      };
+
+    case REDUCE_UNREAD_COUNT:
+      return {
+        ...state,
+        count: state.count - 1,
       };
     default:
       return state;

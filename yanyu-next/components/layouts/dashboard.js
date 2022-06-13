@@ -9,6 +9,7 @@ import {
   Skeleton,
   Divider,
   Badge,
+  message,
 } from "antd";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
@@ -44,8 +45,8 @@ function getItem(label, key, icon, children) {
   return {
     key,
     icon,
-    children,
     label,
+    children,
   };
 }
 
@@ -145,15 +146,6 @@ export default function DashboardLayout({ children }) {
           );
           receiveNewMessage(data.content);
           addUnreadCount();
-
-          // setNotification([newMessage, ...notification]);
-          // if (newMessage.length > 0) {
-          //   setNewMessage([data.content, ...newMessage]);
-          //   addUnreadCount();
-          // } else {
-          //   setNewMessage(data.content);
-          //   addUnreadCount();
-          // }
         }
       }
     };
@@ -261,6 +253,9 @@ export default function DashboardLayout({ children }) {
                               <List.Item
                                 key={item.id}
                                 style={{ opacity: item.status ? 0.6 : 1 }}
+                                onClick={() => {
+                                  console.log("ffff");
+                                }}
                               >
                                 <List.Item.Meta
                                   avatar={<Avatar />}
@@ -277,7 +272,48 @@ export default function DashboardLayout({ children }) {
                   </TabPane>
 
                   <TabPane tab="message" key="2">
-                    Content of Tab Pane 2
+                    {/* {message ? (
+                      <div
+                        id="message"
+                        style={{
+                          height: 400,
+                          overflow: "auto",
+                        }}
+                      >
+                        <InfiniteScroll
+                          dataLength={message.length}
+                          next={loadMoreMessage}
+                          hasMore={message.length < totalMessage}
+                          loader={
+                            <Skeleton avatar paragraph={{ rows: 1 }} active />
+                          }
+                          endMessage={
+                            <Divider plain>It is all, nothing more 🤐</Divider>
+                          }
+                          scrollableTarget="message"
+                        >
+                          <List
+                            dataSource={message}
+                            renderItem={(item) => (
+                              <List.Item
+                                key={item.id}
+                                style={{ opacity: item.status ? 0.6 : 1 }}
+                                onClick={() => {
+                                  console.log("ffff");
+                                }}
+                              >
+                                <List.Item.Meta
+                                  avatar={<Avatar />}
+                                  title={item.from.nickname}
+                                  description={item.from.nickname}
+                                />
+                                <div>{item.content}</div>
+                              </List.Item>
+                            )}
+                          />
+                        </InfiniteScroll>
+                      </div>
+                    ) : null} */}
                   </TabPane>
                 </Tabs>
               }
