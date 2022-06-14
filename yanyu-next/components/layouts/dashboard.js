@@ -137,7 +137,7 @@ export default function DashboardLayout({ children }) {
 
       data = JSON.parse(data || {});
 
-      if (data.type === "message") {
+      if (data.type !== "heartbeat") {
         if (data.content) {
           console.log(
             "%cdashboard.js line:136 newMessage",
